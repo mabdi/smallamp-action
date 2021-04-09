@@ -1,10 +1,10 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'SmallAmp'
+description: 'Test amplification for Pharo'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  testclass:  # id of the input
+    description: 'The unit-test class to be amplified'
     required: true
-    default: '1000'
+    default: 'SmallBankTest'
 outputs:
   time: # output will be available to future steps
     description: 'The message to output'
