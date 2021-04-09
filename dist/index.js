@@ -5,14 +5,25 @@ require('./sourcemap-register.js');module.exports =
 /***/ 932:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const smallamp = __nccwpck_require__(448);
+const core = __nccwpck_require__(186);
+const os  =  __nccwpck_require__ ( 87 )
+const path = __nccwpck_require__(622)
+const tc = __nccwpck_require__(617)
+const io = __nccwpck_require__(27)
+
+
+const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
+const SMALLAMP_DOWNLOAD = 'https://github.com/mabdi/SmallAmp-runner/archive/master.tar.gz'
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    core.info(`Test Amplification started`);
-    await smallamp();
-    core.info(`Test Amplification finished`);
+     let tempDir = path.join(os.homedir(), '.smallAmpCI-temp')
+     const toolPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
+     tempDir = await tc.extractTar(toolPath, tempDir)
+     await io.mv(path.join(tempDir, 'SmallAmp-runner-master'), SMALLAMP_CI_HOME)
+     core.addPath(path.join(INSTALLATION_DIRECTORY, 'bin'))
+     core.exportVariable('SMALLAMP_CI_HOME',SMALLAMP_CI_HOME);
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -416,40 +427,19 @@ exports.toCommandValue = toCommandValue;
 
 /***/ }),
 
-/***/ 448:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 27:
+/***/ ((module) => {
 
-const { exec } = __nccwpck_require__(129);
-const core = __nccwpck_require__(186);
-
-
-let smallamp = function () {
-  return new Promise((resolve) => {
-
-     exec("ls -la", (error, stdout, stderr) => {
-       if (error) {
-          core.info(`error: ${error.message}`);
-          return;
-       }
-       if (stderr) {
-          core.info(`stderr: ${stderr}`);
-          return;
-       }
-       core.info(`stdout: ${stdout}`);
-    });
-  });
-};
-
-module.exports = smallamp;
+module.exports = eval("require")("@actions/io");
 
 
 /***/ }),
 
-/***/ 129:
+/***/ 617:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("child_process");;
+module.exports = eval("require")("@actions/tool-cache");
+
 
 /***/ }),
 

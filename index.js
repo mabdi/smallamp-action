@@ -1,12 +1,22 @@
 const core = require('@actions/core');
-const smallamp = require('./smallamp');
+const os  =  require ( 'os' )
+const path = require('path')
+const tc = require('@actions/tool-cache')
+const io = require('@actions/io')
+
+
+const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
+const SMALLAMP_DOWNLOAD = 'https://github.com/mabdi/SmallAmp-runner/archive/master.tar.gz'
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    core.info(`Test Amplification started`);
-    await smallamp();
-    core.info(`Test Amplification finished`);
+     let tempDir = path.join(os.homedir(), '.smallAmpCI-temp')
+     const toolPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
+     tempDir = await tc.extractTar(toolPath, tempDir)
+     await io.mv(path.join(tempDir, 'SmallAmp-runner-master'), SMALLAMP_CI_HOME)
+     core.addPath(path.join(INSTALLATION_DIRECTORY, 'bin'))
+     core.exportVariable('SMALLAMP_CI_HOME',SMALLAMP_CI_HOME);
   } catch (error) {
     core.setFailed(error.message);
   }
