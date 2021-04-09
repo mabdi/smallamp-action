@@ -1,3 +1,4 @@
+const core = require('@actions/core');
 const smallamp = require('./smallamp');
 
 // most @actions toolkit packages have async methods
