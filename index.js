@@ -2,6 +2,7 @@ const core = require('@actions/core');
 const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const path = require('path')
+const os = require('os')
 
 
 const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')

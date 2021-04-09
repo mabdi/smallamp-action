@@ -9,6 +9,7 @@ const core = __nccwpck_require__(186);
 const io = __nccwpck_require__(436)
 const tc = __nccwpck_require__(784)
 const path = __nccwpck_require__(622)
+const os = __nccwpck_require__(87)
 
 
 const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
