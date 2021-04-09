@@ -5,20 +5,14 @@ require('./sourcemap-register.js');module.exports =
 /***/ 932:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const core = __nccwpck_require__(186);
-const github = __nccwpck_require__(716);
-
-const wait = __nccwpck_require__(448);
-
+const smallamp = __nccwpck_require__(448);
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const testclass = core.getInput('testclass');
-    core.info(`Test Amplification started: ${testclass}`);
-    await smallamp(testclass);
-    core.info(`Test Amplification finished: ${testclass}`);
-    core.setOutput('time', 'todo');
+    core.info(`Test Amplification started`);
+    await smallamp();
+    core.info(`Test Amplification finished`);
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -429,7 +423,7 @@ const { exec } = __nccwpck_require__(129);
 const core = __nccwpck_require__(186);
 
 
-let smallamp = function (testclass) {
+let smallamp = function () {
   return new Promise((resolve) => {
 
      exec("ls -la", (error, stdout, stderr) => {
@@ -447,14 +441,6 @@ let smallamp = function (testclass) {
 };
 
 module.exports = smallamp;
-
-
-/***/ }),
-
-/***/ 716:
-/***/ ((module) => {
-
-module.exports = eval("require")("@actions/github");
 
 
 /***/ }),

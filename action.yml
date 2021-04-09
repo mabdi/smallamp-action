@@ -1,13 +1,5 @@
 name: 'SmallAmp'
 description: 'Test amplification for Pharo'
-inputs:
-  testclass:  # id of the input
-    description: 'The unit-test class to be amplified'
-    required: true
-    default: 'SmallBankTest'
-outputs:
-  time: # output will be available to future steps
-    description: 'The message to output'
 runs:
   using: 'node12'
   main: 'dist/index.js'
