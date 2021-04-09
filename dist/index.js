@@ -22,7 +22,7 @@ async function run() {
      const toolPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
      tempDir = await tc.extractTar(toolPath, tempDir)
      await io.mv(path.join(tempDir, 'SmallAmp-runner-master'), SMALLAMP_CI_HOME)
-     core.addPath(path.join(INSTALLATION_DIRECTORY, 'bin'))
+     core.addPath(path.join(SMALLAMP_CI_HOME, 'bin'))
      core.exportVariable('SMALLAMP_CI_HOME',SMALLAMP_CI_HOME);
   } catch (error) {
     core.setFailed(error.message);
