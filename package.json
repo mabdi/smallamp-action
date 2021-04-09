@@ -1,36 +1,33 @@
 {
-  "name": "javascript-action",
+  "name": "SmallAmp-action",
   "version": "1.0.0",
-  "description": "JavaScript Action Template",
+  "description": "SmallAmp CI for github actions",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint .",
-    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
-    "test": "jest",
-    "all": "npm run lint && npm run prepare && npm run test"
+    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/javascript-action.git"
+    "url": "git+https://github.com/mabdi/smallamp-action.git"
   },
   "keywords": [
-    "GitHub",
-    "Actions",
-    "JavaScript"
+    "SmallAmp"
   ],
-  "author": "",
+  "author": "Mehrdad Abdi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/actions/javascript-action/issues"
+    "url": "https://github.com/mabdi/smallamp-action/issues"
   },
-  "homepage": "https://github.com/actions/javascript-action#readme",
+  "homepage": "https://github.com/mabdi/smallamp-action#readme",
   "dependencies": {
-    "@actions/core": "^1.2.5",
+    "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
     "@actions/tool-cache": "^1.6.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.27.0",
     "eslint": "^7.4.0",
+    " is " : " ^ 26.6.3 ",
     "jest": "^26.6.3"
   }
 }
