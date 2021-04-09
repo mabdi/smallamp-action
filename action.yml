@@ -3,3 +3,5 @@ description: 'Test amplification for Pharo'
 runs:
   using: 'node12'
   main: 'dist/index.js'
+  post: 'dist2/index.js'
+
