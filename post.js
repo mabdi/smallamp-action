@@ -11,9 +11,9 @@ const fs = require('fs');
 async function run() {
   try {
      const dir = process.env.SMALLAMP_CI_ZIPS
-
+     const runId = process.env.GITHUB_RUN_NUMBER
      const artifactClient = artifact.create()
-     const artifactName = 'smallAmp-outPut';
+     const artifactName = 'smallAmp-output-run' + runId;
      const files = fs.readdirSync(dir).filter(fn => fn.endsWith('.zip')).map(x => dir + '/' + x);
      if (files.length > 0)
      {
