@@ -14,7 +14,7 @@ async function run() {
 
      const artifactClient = artifact.create()
      const artifactName = 'smallAmp-outPut';
-     const files = fs.readdirSync(dir).filter(fn => fn.endsWith('.zip'));
+     const files = fs.readdirSync(dir).filter(fn => fn.endsWith('.zip')).map(x => dir + '/' + x);
      if (files.length > 0)
      {
          const rootDirectory = dir // Also possible to use __dirname
