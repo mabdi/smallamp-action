@@ -6,11 +6,14 @@ const os = require('os')
 
 
 const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
+const SMALLAMP_CI_ZIPS = path.join(SMALLAMP_CI_HOME, '_zip')
 const SMALLAMP_DOWNLOAD = 'https://github.com/mabdi/SmallAmp-runner/archive/master.tar.gz'
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
+     await io.mkdirP(SMALLAMP_CI_ZIPS);
+     core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_CI_ZIPS);
      let tempDir = path.join(os.homedir(), '.smallAmpCI-temp')
      const toolPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
      tempDir = await tc.extractTar(toolPath, tempDir)
