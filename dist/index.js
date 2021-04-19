@@ -10,6 +10,7 @@ const io = __nccwpck_require__(436)
 const tc = __nccwpck_require__(784)
 const path = __nccwpck_require__(622)
 const os = __nccwpck_require__(87)
+const github = __nccwpck_require__(716);
 
 
 const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
@@ -37,6 +38,11 @@ async function run() {
 
      core.addPath(path.join(SMALLAMP_CI_HOME, 'bin'))
      core.exportVariable('SMALLAMP_CI_HOME',SMALLAMP_CI_HOME);
+     core.exportVariable('SMALLAMP_BRANCH_NAME','SmallAmp-Run' + process.env.GITHUB_RUN_NUMBER);
+
+    
+     
+
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -5002,6 +5008,14 @@ if (process.env.NODE_DEBUG && /\btunnel\b/.test(process.env.NODE_DEBUG)) {
   debug = function() {};
 }
 exports.debug = debug; // for test
+
+
+/***/ }),
+
+/***/ 716:
+/***/ ((module) => {
+
+module.exports = eval("require")("@actions/github");
 
 
 /***/ }),

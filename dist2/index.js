@@ -7230,10 +7230,7 @@ const path = __nccwpck_require__(5622)
 const os = __nccwpck_require__(2087)
 const fs = __nccwpck_require__(5747);
 
-
-
-// most @actions toolkit packages have async methods
-async function run() {
+async function build_artifacts() {
   try {
      const dir = process.env.SMALLAMP_CI_ZIPS
      const runId = process.env.GITHUB_RUN_NUMBER
@@ -7272,7 +7269,7 @@ async function run() {
   }
 }
 
-run();
+build_artifacts();
 
 
 /***/ }),

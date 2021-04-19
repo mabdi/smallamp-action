@@ -5,10 +5,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs');
 
-
-
-// most @actions toolkit packages have async methods
-async function run() {
+async function build_artifacts() {
   try {
      const dir = process.env.SMALLAMP_CI_ZIPS
      const runId = process.env.GITHUB_RUN_NUMBER
@@ -47,4 +44,4 @@ async function run() {
   }
 }
 
-run();
+build_artifacts();

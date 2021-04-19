@@ -3,6 +3,7 @@ const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const path = require('path')
 const os = require('os')
+const github = require('@actions/github');
 
 
 const SMALLAMP_CI_HOME = path.join(os.homedir(), '.smallAmpCI')
@@ -30,6 +31,11 @@ async function run() {
 
      core.addPath(path.join(SMALLAMP_CI_HOME, 'bin'))
      core.exportVariable('SMALLAMP_CI_HOME',SMALLAMP_CI_HOME);
+     core.exportVariable('SMALLAMP_BRANCH_NAME','SmallAmp-Run' + process.env.GITHUB_RUN_NUMBER);
+
+    
+     
+
   } catch (error) {
     core.setFailed(error.message);
   }
