@@ -8419,7 +8419,8 @@ const fs = __nccwpck_require__(5747)
 
 async function build_overview() {
     try {
-        let base = process.env.SMALLTALK_CI_IMAGE.substring(0,path.lastIndexOf("/")+1);
+        let base = process.env.SMALLTALK_CI_IMAGE
+        base = base.substring(0, base.lastIndexOf("/") + 1);
         const dir = process.env.SMALLAMP_CI_ZIPS
         let myOutput = '';
         let myError = '';
