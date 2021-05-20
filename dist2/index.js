@@ -8422,6 +8422,7 @@ async function build_overview() {
         let base = process.env.SMALLTALK_CI_IMAGE
         base = base.substring(0, base.lastIndexOf("/") + 1);
         const dir = process.env.SMALLAMP_CI_ZIPS
+        const job_id = process.env.SMALLAMP_PORTION
         let myOutput = '';
         let myError = '';
         let detail_amp = '';
@@ -8442,8 +8443,8 @@ async function build_overview() {
         await exec.exec('python3', ['runner.py', '-r', 'sum', '-d', base, '-p', process.env.reponame], options);
         sum_amp = myOutput;
 
-        fs.writeFile(`${dir}/amp.txt`, detail_amp)
-        fs.writeFile(`${dir}/sum.txt`, sum_amp)
+        fs.writeFileSync(`${dir}/amp-${job_id}.txt`, detail_amp, function(error){ core.error(error) })
+        fs.writeFileSync(`${dir}/sum-${job_id}.txt`, sum_amp, function(error){ core.error(error) }) 
 
     } catch (error) {
     core.setFailed(error.message);
@@ -8463,7 +8464,7 @@ async function build_artifacts() {
      const artifactOverview = 'smallAmp-overview-'+ reponame +'-run' + runId;
      const files_results = fs.readdirSync(dir).filter(fn => fn.endsWith('results.zip')).map(x => dir + '/' + x);
      const files_logs = fs.readdirSync(dir).filter(fn => fn.endsWith('logs.zip')).map(x => dir + '/' + x);
-     const files_overview = fs.readdirSync(dir).filter(fn => fn.endsWith('logs.txt')).map(x => dir + '/' + x);
+     const files_overview = fs.readdirSync(dir).filter(fn => fn.endsWith('.txt')).map(x => dir + '/' + x);
      if (files_results.length > 0)
      {
          const rootDirectory = dir // Also possible to use __dirname

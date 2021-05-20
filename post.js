@@ -32,8 +32,8 @@ async function build_overview() {
         await exec.exec('python3', ['runner.py', '-r', 'sum', '-d', base, '-p', process.env.reponame], options);
         sum_amp = myOutput;
 
-        fs.writeFileSync(`${dir}/amp-${job_id}.txt`, detail_amp)
-        fs.writeFileSync(`${dir}/sum-${job_id}.txt`, sum_amp)
+        fs.writeFileSync(`${dir}/amp-${job_id}.txt`, detail_amp, function(error){ core.error(error) })
+        fs.writeFileSync(`${dir}/sum-${job_id}.txt`, sum_amp, function(error){ core.error(error) }) 
 
     } catch (error) {
     core.setFailed(error.message);
