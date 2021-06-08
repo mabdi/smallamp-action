@@ -7,6 +7,17 @@ const path = require('path')
 const os = require('os')
 // const style = require('ansi-styles');
 
+
+/*
+I require these ENVs:
+
+loading:
+  project_baseline
+  project_directory 
+  project_load (optional)
+
+*/
+
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'pharo'
 const PHARO_IMAGE = 'Pharo.image'
@@ -23,11 +34,10 @@ async function install_Pharo(){
   await io.mkdirP(PHARO_HOME);
   await logMe('PHARO_HOME = '+ PHARO_HOME)
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
-  await logMe('After mv: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   child_process.execSync('./installPharo.sh', {cwd: PHARO_HOME})
   await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
-  // let version = await eval_Pharo('Smalltalk version')
-  // await logMe('Pharo installed: version +', version)
+  let version = await eval_Pharo('Smalltalk version')
+  await logMe('Pharo installed: version +', version)
   // core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
   // core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
   // core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_ZIPS);
@@ -40,8 +50,8 @@ async function download_SmallAmp(){
   const tonelPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
   tempDir = await tc.extractTar(tonelPath, tempDir)
   await io.mv(path.join(tempDir, 'small-amp-master'), SMALLAMP_HOME)
-  await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   await io.mkdirP(SMALLAMP_ZIPS);
+  await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   // core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
   // core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
   // core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
@@ -63,15 +73,25 @@ async function run_st_script(scriptName){
   await eval_st_Pharo(scriptName)
 }
 
+async function load_project(){
+  // project_baseline should be set
+  // project_directory should be set
+  // project_load if necessary
+  core.exportVariable('project_repository', process.env.GITHUB_WORKSPACE + '/' + process.env.project_directory);
+  await run_st_script('load_project.st')
+}
+
 async function setup_run() {
   await logMe('***************Downloading SmallAmp')
   await download_SmallAmp()
   await logMe('***************Install Pharo')
   await install_Pharo()
-  
-  // run_st_script('load_project.st')
-  // run_st_script('run_tests.st')
-  // run_st_script('load_SmallAmp.st')
+  await logMe('***************Load project')
+  await load_project()
+  // await logMe('***************Run tests')
+  // await run_st_script('run_tests.st')
+  // await logMe('***************Load SmallAmp')
+  // await run_st_script('load_SmallAmp.st')
 }
 
 async function amplify_run() {
