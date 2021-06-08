@@ -116,7 +116,44 @@ async function amplify_run() {
 }
 
 async function push_run() {
+  const run_number = "TODO"
+  const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
+  child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
 
+  /* TODO
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: ${{ env.SMALLTALK_CI_BUILD_BASE }}
+          */
+  child_process.execSync('ls; cd smallAmp-results*; ls; find . -name "*.zip" -exec unzip {} \;; rm *.zip; mv * ..', {cwd: PHARO_HOME})
+  child_process.execSync('python3 runner.py -r amp -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp.txt', {cwd: SMALLAMP_RUNNER})
+  child_process.execSync('python3 runner.py -r sum -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum.txt', {cwd: SMALLAMP_RUNNER})
+         
+          /* TODO
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "smallAmp-overview-${{ env.reponame }}-run${{github.run_number}}"
+          path: ${{env.SMALLAMP_CI_HOME}}/overview-*.txt */
+  await run_st_script('installer.st')
+  child_process.execSync("git config user.name mabdi", {cwd: GITHUB_WORKSPACE})
+  child_process.execSync("git add '*.st'", {cwd: GITHUB_WORKSPACE})
+  child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: GITHUB_WORKSPACE})
+  child_process.execSync("git push -u origin HEAD", {cwd: GITHUB_WORKSPACE})
+          /* TODO: use octokit
+      - uses: actions/github-script@v4
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.pulls.create({
+                owner: "mabdi",
+                repo: '${{ env.reponame }}',
+                title: "[SmallAmp] amplified tests for action number ${{github.run_number}}",
+                head: "SmallAmp-${{github.run_number}}",
+                base: "${{ steps.extract_branch.outputs.branch }}",
+                body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
+            });
+  */
 }
 
 async function logMe(string){
