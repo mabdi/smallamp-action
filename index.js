@@ -86,7 +86,6 @@ async function logMe(string){
   core.info(string)
 }
 
-await logMe('Script started, action = ' + action)
 try {
   if(action == 'setup')
     setup_run();
