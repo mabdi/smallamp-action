@@ -22,7 +22,9 @@ const action = core.getInput('action', { required: true });
 async function install_Pharo(){
   await io.mkdirP(PHARO_HOME);
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
-  exec.exec('./installPharo.sh', {cwd: PHARO_HOME})
+  const options = {};
+  options.cwd = PHARO_HOME;
+  exec.exec('./installPharo.sh', options)
   await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   // let version = await eval_Pharo('Smalltalk version')
   // await logMe('Pharo installed: version +', version)
