@@ -11,7 +11,7 @@ const io = __nccwpck_require__(436)
 const tc = __nccwpck_require__(784)
 const path = __nccwpck_require__(622)
 const os = __nccwpck_require__(87)
-const styles = __nccwpck_require__(68);
+const style = __nccwpck_require__(68);
 
 
 const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
@@ -86,7 +86,7 @@ async function push_run() {
 }
 
 async function logMe(string){
-  core.info(`${styles.blue.open}${string}${styles.blue.close}`)
+  core.info(`${style.blue.open}${string}${style.blue.close}`)
 }
 
 logMe('Script started, action = ' + action)
