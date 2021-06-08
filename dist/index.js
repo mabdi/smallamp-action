@@ -27,12 +27,13 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 const action = core.getInput('action', { required: true });
 
 async function install_Pharo(){
-  await logMe('***************Install Pharo')
+  
   await io.mkdirP(PHARO_HOME);
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
   exec.exec('chmode +x installPharo.sh', {cwd: PHARO_HOME})
+  await logMe('before zero conf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   exec.exec('./installPharo.sh', {cwd: PHARO_HOME})
-  await logMe('ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
   core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
@@ -42,7 +43,7 @@ async function install_Pharo(){
 }
 
 async function download_SmallAmp(){
-  await logMe('***************Downloading SmallAmp')
+  
   let tempDir = path.join(os.homedir(), '.smallAmp-temp')
   const tonelPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
   tempDir = await tc.extractTar(tonelPath, tempDir)
@@ -71,7 +72,9 @@ async function run_st_script(scriptName){
 }
 
 async function setup_run() {
+  await logMe('***************Downloading SmallAmp')
   await download_SmallAmp()
+  await logMe('***************Install Pharo')
   await install_Pharo()
   
   // run_st_script('load_project.st')
@@ -90,7 +93,7 @@ async function push_run() {
 async function logMe(string){
   // const color = style.color.blue
   // core.info(`${color.open}${string}${color.close}`)
-  core.info(string)
+  await core.info(string)
 }
 
 try {
