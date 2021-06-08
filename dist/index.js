@@ -65,12 +65,12 @@ async function download_SmallAmp(){
 }
 
 async function eval_Pharo(script){
-  cmd = PHARO_VM + ' ' + PHARO_IMAGE + ' eval "' + script + '"'
+  cmd = './' + PHARO_VM + ' ' + PHARO_IMAGE + ' eval "' + script + '"'
   child_process.execSync(cmd, {cwd: PHARO_HOME})
 }
 
 async function eval_st_Pharo(scriptName){
-  cmd = PHARO_VM + ' ' + PHARO_IMAGE + ' st "' + scriptName + '"'
+  cmd = './' + PHARO_VM + ' ' + PHARO_IMAGE + ' st "' + scriptName + '"'
   child_process.execSync(cmd, {cwd: PHARO_HOME})
 }
 
