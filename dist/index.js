@@ -86,7 +86,8 @@ async function push_run() {
 }
 
 async function logMe(string){
-  core.info(`${style.blue.open}${string}${style.blue.close}`)
+  const color = style.color.blue
+  core.info(`${color.open}${string}${color.close}`)
 }
 
 logMe('Script started, action = ' + action)
