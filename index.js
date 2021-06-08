@@ -4,6 +4,8 @@ const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const path = require('path')
 const os = require('os')
+const style = require('ansi-styles');
+
 
 const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
@@ -19,13 +21,17 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 const action = core.getInput('action', { required: true });
 
 async function download_Pharo(){
+  logMe('Downloading Pharo')
   dest = 'pharoZeroConf'
   const zeroConf = await tc.downloadTool(PHARO_ZEROCONF_URL, dest)
   await io.mv(zeroConf, PHARO_HOME)
   child_process.execSync('bash ' + dest, {cwd: PHARO_HOME})
+  let version = eval_Pharo('Smalltalk version')
+  logMe('Pharo installed: version +', version)
 }
 
 async function download_SmallAmp(){
+  logMe('Downloading SmallAmp')
   let tempDir = path.join(os.homedir(), '.smallAmp-temp')
   const tonelPath = await tc.downloadTool(SMALLAMP_TONEL_DOWNLOAD)
   tempDir = await tc.extractTar(tonelPath, tempDir)
@@ -51,6 +57,7 @@ async function eval_st_Pharo(scriptName){
 }
 
 async function run_st_script(scriptName){
+  logMe('Running script ', scriptName)
   await io.mv(path.join(SMALLAMP_SCRIPTS, scriptName), PHARO_HOME)
   eval_st_Pharo(scriptName)
 }
@@ -71,6 +78,11 @@ async function push_run() {
 
 }
 
+async function logMe(string){
+  core.info(`${styles.blue.open}${string}${styles.blue.close}`)
+}
+
+logMe('Script started, action = ' + action)
 try {
   if(action == 'setup')
     setup_run();
