@@ -71,7 +71,7 @@ async function run_Pharo(arg){
 }
 
 async function run_st_script(scriptName){
-  await logMe('Running script ', scriptName)
+  await logMe('Running script '+ scriptName)
   await io.mv(path.join(SMALLAMP_SCRIPTS, scriptName), PHARO_HOME)
   await run_Pharo('st ' + scriptName)
 }
@@ -97,8 +97,8 @@ async function load_SmallAmp(){
 
 async function stat_project(){
   await run_Pharo('smallamp  --save --stat=' + REPO_NAME)
-  await logMe('Stat eval done:')
-  child_process.execSync('cat '+ REPO_NAME + '.stat', {cwd: PHARO_HOME})
+  await logMe('PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  await logMe('Stat eval done:\n' + child_process.execSync('cat '+ REPO_NAME + '.stat', {cwd: PHARO_HOME}))
 }
 
 async function setup_run() {
