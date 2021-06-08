@@ -1,5 +1,10 @@
 name: 'SmallAmp'
 description: 'Test amplification for Pharo'
+inputs:
+  action:  
+    description: 'action (setup, amplify, push)'
+    required: true
+    default: 'setup'
 runs:
   using: 'node12'
   main: 'dist/index.js'
