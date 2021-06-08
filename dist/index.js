@@ -12,7 +12,7 @@ const tc = __nccwpck_require__(784)
 const path = __nccwpck_require__(622)
 const os = __nccwpck_require__(87)
 
-const PHARO_ZEROCONF_URL = 'get.pharo.org/64/stable'
+const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'vm'
 const PHARO_IMAGE = 'Pharo.image'

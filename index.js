@@ -5,7 +5,7 @@ const tc = require('@actions/tool-cache')
 const path = require('path')
 const os = require('os')
 
-const PHARO_ZEROCONF_URL = 'get.pharo.org/64/stable'
+const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'vm'
 const PHARO_IMAGE = 'Pharo.image'
