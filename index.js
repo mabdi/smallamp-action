@@ -19,7 +19,7 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 
 const action = core.getInput('action', { required: true });
 
-async function installing_Pharo(){
+async function install_Pharo(){
   await logMe('Downloading Pharo')
   await io.mkdirP(PHARO_HOME);
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
@@ -28,6 +28,10 @@ async function installing_Pharo(){
   await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
+  core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
+  core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
+  core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_ZIPS);
+  
 }
 
 async function download_SmallAmp(){
@@ -40,10 +44,6 @@ async function download_SmallAmp(){
   core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
   core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
   core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
-  core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
-  core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
-  core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_ZIPS);
-  
 }
 
 async function eval_Pharo(script){
@@ -63,8 +63,9 @@ async function run_st_script(scriptName){
 }
 
 async function setup_run() {
-  await installing_Pharo()
-  // download_SmallAmp()
+  await download_SmallAmp()
+  await install_Pharo()
+  
   // run_st_script('load_project.st')
   // run_st_script('run_tests.st')
   // run_st_script('load_SmallAmp.st')
