@@ -11,7 +11,7 @@ const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'pharo'
 const PHARO_IMAGE = 'Pharo.image'
 
-const SMALLAMP_TONEL_DOWNLOAD = 'https://github.com/mabdi/small-amp/archive/master.tar.gz'
+const SMALLAMP_DOWNLOAD = 'https://github.com/mabdi/small-amp/archive/master.tar.gz'
 const SMALLAMP_HOME = path.join(os.homedir(), '.smallAmp')
 const SMALLAMP_RUNNER = path.join(SMALLAMP_HOME, 'runner')
 const SMALLAMP_SCRIPTS = path.join(SMALLAMP_HOME, 'scripts')
@@ -20,12 +20,12 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 const action = core.getInput('action', { required: true });
 
 async function install_Pharo(){
-  await logMe('Downloading Pharo')
+  await logMe('***************Install Pharo')
   await io.mkdirP(PHARO_HOME);
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
   exec.exec('chmode +x installPharo.sh', {cwd: PHARO_HOME})
   exec.exec('./installPharo.sh', {cwd: PHARO_HOME})
-  await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
+  await logMe('ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
   core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
@@ -35,15 +35,16 @@ async function install_Pharo(){
 }
 
 async function download_SmallAmp(){
-  await logMe('Downloading SmallAmp')
+  await logMe('***************Downloading SmallAmp')
   let tempDir = path.join(os.homedir(), '.smallAmp-temp')
-  const tonelPath = await tc.downloadTool(SMALLAMP_TONEL_DOWNLOAD)
+  const tonelPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
   tempDir = await tc.extractTar(tonelPath, tempDir)
   await io.mv(path.join(tempDir, 'small-amp-master'), SMALLAMP_HOME)
+  await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   await io.mkdirP(SMALLAMP_ZIPS);
-  core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
-  core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
-  core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
+  // core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
+  // core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
+  // core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
 }
 
 async function eval_Pharo(script){
