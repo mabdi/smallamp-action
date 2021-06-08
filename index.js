@@ -24,9 +24,9 @@ async function download_Pharo(){
   await logMe('Downloading Pharo')
   const zeroConf = await tc.downloadTool(PHARO_ZEROCONF_URL)
   await logMe('zero conf: '+ zeroConf)
-  await io.mv(zeroConf, PHARO_HOME)
+  await io.mv(zeroConf, PHARO_HOME + '/zeroConf')
   await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
-  child_process.execSync('bash ' + dest, {cwd: PHARO_HOME})
+  child_process.execSync('bash zeroConf', {cwd: PHARO_HOME})
   await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
@@ -65,11 +65,11 @@ async function run_st_script(scriptName){
 }
 
 async function setup_run() {
-  download_Pharo()
-  download_SmallAmp()
-  run_st_script('load_project.st')
-  run_st_script('run_tests.st')
-  run_st_script('load_SmallAmp.st')
+  await download_Pharo()
+  // download_SmallAmp()
+  // run_st_script('load_project.st')
+  // run_st_script('run_tests.st')
+  // run_st_script('load_SmallAmp.st')
 }
 
 async function amplify_run() {
