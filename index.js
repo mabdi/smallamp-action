@@ -21,17 +21,19 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 const action = core.getInput('action', { required: true });
 
 async function download_Pharo(){
-  logMe('Downloading Pharo')
-  dest = 'pharoZeroConf'
-  const zeroConf = await tc.downloadTool(PHARO_ZEROCONF_URL, dest)
+  await logMe('Downloading Pharo')
+  const zeroConf = await tc.downloadTool(PHARO_ZEROCONF_URL)
+  await logMe('zero conf: '+ zeroConf)
   await io.mv(zeroConf, PHARO_HOME)
+  await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
   child_process.execSync('bash ' + dest, {cwd: PHARO_HOME})
-  let version = eval_Pharo('Smalltalk version')
-  logMe('Pharo installed: version +', version)
+  await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
+  let version = await eval_Pharo('Smalltalk version')
+  await logMe('Pharo installed: version +', version)
 }
 
 async function download_SmallAmp(){
-  logMe('Downloading SmallAmp')
+  await logMe('Downloading SmallAmp')
   let tempDir = path.join(os.homedir(), '.smallAmp-temp')
   const tonelPath = await tc.downloadTool(SMALLAMP_TONEL_DOWNLOAD)
   tempDir = await tc.extractTar(tonelPath, tempDir)
@@ -57,7 +59,7 @@ async function eval_st_Pharo(scriptName){
 }
 
 async function run_st_script(scriptName){
-  logMe('Running script ', scriptName)
+  await logMe('Running script ', scriptName)
   await io.mv(path.join(SMALLAMP_SCRIPTS, scriptName), PHARO_HOME)
   eval_st_Pharo(scriptName)
 }
@@ -84,7 +86,7 @@ async function logMe(string){
   core.info(string)
 }
 
-logMe('Script started, action = ' + action)
+await logMe('Script started, action = ' + action)
 try {
   if(action == 'setup')
     setup_run();
