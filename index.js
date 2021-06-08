@@ -4,7 +4,7 @@ const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const path = require('path')
 const os = require('os')
-const style = require('ansi-styles');
+// const style = require('ansi-styles');
 
 
 const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
@@ -79,8 +79,9 @@ async function push_run() {
 }
 
 async function logMe(string){
-  const color = style.color.blue
-  core.info(`${color.open}${string}${color.close}`)
+  // const color = style.color.blue
+  // core.info(`${color.open}${string}${color.close}`)
+  core.info(string)
 }
 
 logMe('Script started, action = ' + action)
