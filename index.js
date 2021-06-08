@@ -4,7 +4,7 @@ const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const path = require('path')
 const os = require('os')
-const style = require('ansi-styles');
+const styles = require('ansi-styles');
 
 
 const PHARO_ZEROCONF_URL = 'http://get.pharo.org/64/stable'
