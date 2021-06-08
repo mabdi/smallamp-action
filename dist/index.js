@@ -9,12 +9,13 @@ const child_process = __nccwpck_require__(129)
 const core = __nccwpck_require__(186);
 const io = __nccwpck_require__(436)
 const tc = __nccwpck_require__(784)
+const exec = __nccwpck_require__(514)
 const path = __nccwpck_require__(622)
 const os = __nccwpck_require__(87)
 // const style = require('ansi-styles');
 
 
-const PHARO_ZEROCONF = 'curl https://get.pharo.org/64 | bash'
+const PHARO_ZEROCONF = 'curl https://get.pharo.org/64/stable | bash'
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'vm'
 const PHARO_IMAGE = 'Pharo.image'
@@ -30,7 +31,7 @@ const action = core.getInput('action', { required: true });
 async function download_Pharo(){
   await logMe('Downloading Pharo')
   await io.mkdirP(PHARO_HOME);
-  child_process.execSync(PHARO_ZEROCONF, {cwd: PHARO_HOME})
+  exec.exec(PHARO_ZEROCONF, {cwd: PHARO_HOME})
   await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
