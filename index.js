@@ -93,7 +93,7 @@ async function stat_project(){
   await logMe('PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   eval_content = child_process.execSync('cat '+ REPO_NAME + '.stat', {cwd: PHARO_HOME})
   await logMe('Stat eval done:\n' + eval_content)
-  if(eval_content.includes('#allGreen->true')){
+  if(!eval_content.includes('#allGreen->true')){
     core.warning('All tests are not green. Non-green tests will be ignored.')
   }
 }
