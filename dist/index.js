@@ -44,8 +44,8 @@ async function install_Pharo(){
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
   child_process.execSync('./installPharo.sh', {cwd: PHARO_HOME})
   await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
-  let version = await run_Pharo('eval "Smalltalk version"')
-  await logMe('Pharo installed: version +', version)
+  let version = await run_Pharo("eval 'Smalltalk version'")
+  await logMe('Pharo installed: version ' + version)
   // core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
   // core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
   // core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_ZIPS);
