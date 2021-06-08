@@ -7,10 +7,8 @@ const path = require('path')
 const os = require('os')
 // const style = require('ansi-styles');
 
-
-const PHARO_ZEROCONF = 'curl https://get.pharo.org/64/stable | bash'
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
-const PHARO_VM = 'vm'
+const PHARO_VM = 'pharo'
 const PHARO_IMAGE = 'Pharo.image'
 
 const SMALLAMP_TONEL_DOWNLOAD = 'https://github.com/mabdi/small-amp/archive/master.tar.gz'
@@ -21,10 +19,12 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 
 const action = core.getInput('action', { required: true });
 
-async function download_Pharo(){
+async function installing_Pharo(){
   await logMe('Downloading Pharo')
   await io.mkdirP(PHARO_HOME);
-  exec.exec(PHARO_ZEROCONF, {cwd: PHARO_HOME})
+  await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
+  exec.exec('chmode +x installPharo.sh', {cwd: PHARO_HOME})
+  exec.exec('./installPharo.sh', {cwd: PHARO_HOME})
   await logMe('ls PharoHome: '+ child_process.execSync('ls', {cwd: PHARO_HOME}))
   let version = await eval_Pharo('Smalltalk version')
   await logMe('Pharo installed: version +', version)
@@ -63,7 +63,7 @@ async function run_st_script(scriptName){
 }
 
 async function setup_run() {
-  await download_Pharo()
+  await installing_Pharo()
   // download_SmallAmp()
   // run_st_script('load_project.st')
   // run_st_script('run_tests.st')
