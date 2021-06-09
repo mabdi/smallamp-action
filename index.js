@@ -1,10 +1,15 @@
-const child_process = require('child_process')
+
 const core = require('@actions/core');
 const io = require('@actions/io')
 const tc = require('@actions/tool-cache')
 const exec = require('@actions/exec')
+const artifact = require('@actions/artifact')
+const github = require('@actions/github');
+
+const child_process = require('child_process')
 const path = require('path')
 const os = require('os')
+const fs = require('fs')
 // const style = require('ansi-styles');
 
 
@@ -12,17 +17,24 @@ const os = require('os')
 I require these ENVs:
 
 loading:
-  project_baseline
-  project_directory 
-  project_load (optional)
+  env:
+    project_baseline
+    project_directory 
+    project_load (optional)
+
+Push:
+  input: 
+    github-token: ${{secrets.GITHUB_TOKEN}}
 
 */
 
 const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'pharo'
 const PHARO_IMAGE = 'Pharo.image'
+const COMMIT_USER = 'mabdi'
+const DEFAULT_BRANCH = 'master'
+const DEFAULT_SOURCE = 'mabdi/small-amp'
 
-const SMALLAMP_DOWNLOAD = 'https://github.com/mabdi/small-amp/archive/master.tar.gz'
 const SMALLAMP_HOME = path.join(os.homedir(), '.smallAmp')
 const SMALLAMP_RUNNER = path.join(SMALLAMP_HOME, 'runner')
 const SMALLAMP_SCRIPTS = path.join(SMALLAMP_HOME, 'scripts')
@@ -39,6 +51,9 @@ async function install_Pharo(){
   await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   // let version = await run_Pharo("eval 'Smalltalk version'")
   
+  core.exportVariable('PHARO_HOME', PHARO_HOME);
+  core.exportVariable('PHARO_VM', PHARO_VM);
+  core.exportVariable('PHARO_IMAGE', PHARO_IMAGE);
   // core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
   // core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
   // core.exportVariable('SMALLAMP_CI_ZIPS', SMALLAMP_ZIPS);
@@ -46,15 +61,17 @@ async function install_Pharo(){
 }
 
 async function download_SmallAmp(){
-  
   let tempDir = path.join(os.homedir(), '.smallAmp-temp')
-  const tonelPath = await tc.downloadTool(SMALLAMP_DOWNLOAD)
+  const smallampBranch = core.getInput('smallamp-branch') || DEFAULT_BRANCH
+  const smallampSource = core.getInput('smallamp-source') || DEFAULT_SOURCE
+
+  const tonelPath = await tc.downloadTool(`https://github.com/${smallampSource}/archive/${smallampBranch}.tar.gz`)
   tempDir = await tc.extractTar(tonelPath, tempDir)
   await io.mv(path.join(tempDir, 'small-amp-master'), SMALLAMP_HOME)
   await io.mkdirP(SMALLAMP_ZIPS);
   await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   // core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
-  core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
+  // core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
   // core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
 }
 
@@ -105,55 +122,118 @@ async function setup_run() {
   await install_Pharo()
   await logMe('***************Load project')
   await load_project()
+}
+
+async function build_amplify_artifacts() {
+    const dir = SMALLAMP_ZIPS
+    const runId = process.env.GITHUB_RUN_NUMBER
+    const artifactClient = artifact.create()
+    const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
+    const artifactLogs = 'smallAmp-logs-'+ REPO_NAME +'-run' + runId;
+    const files_results = fs.readdirSync(dir).filter(fn => fn.endsWith('results.zip')).map(x => dir + '/' + x);
+    const files_logs = fs.readdirSync(dir).filter(fn => fn.endsWith('logs.zip')).map(x => dir + '/' + x);
+    if (files_results.length > 0)
+    {
+        const rootDirectory = dir // Also possible to use __dirname
+        const options = {
+          continueOnError: false
+        }
+        const uploadResponse = await artifactClient.uploadArtifact(artifactResults, files_results, rootDirectory, options)
+    }else{
+        core.info('No result files to build the artifact. ')
+    }
+    if (files_logs.length > 0)
+    {
+        const rootDirectory = dir // Also possible to use __dirname
+        const options = {
+          continueOnError: false
+        }
+        const uploadResponse = await artifactClient.uploadArtifact(artifactLogs, files_logs, rootDirectory, options)
+    }else{
+        core.info('No logs files to build the artifact. ')
+    }
+}
+
+async function execute_smallamp_runner() {
+  // PHARO_HOME
+  // PHARO_IMAGE
+  // PHARO_VM
+
+  // iteration": os.getenv('SMALLAMP_iteration'),
+  // maxInputs": os.getenv('SMALLAMP_maxInputs'),
+  // mode": os.getenv('SMALLAMP_mode'),
+
+  // SMALLAMP_ZIPS
+  child_process.execSync('python3 runner.py -g', {cwd: SMALLAMP_RUNNER})
+}
+
+async function amplify_run() {
   await logMe('***************Load SmallAmp')
   await load_SmallAmp()
   await logMe('***************Project stat')
   await stat_project()
+  await logMe('***************Runner')
+  await execute_smallamp_runner()
+  await logMe('***************Build artifacts')
+  await build_amplify_artifacts()
 }
 
-async function amplify_run() {
-  child_process.execSync(cmd, {cwd: PHARO_HOME})
-}
 
-async function push_run() {
-  const run_number = "TODO"
-  const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
-  child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
-
-  /* TODO
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: ${{ env.SMALLTALK_CI_BUILD_BASE }}
-          */
+async function download_extract_artifact(){
+  const artifactClient = artifact.create();
+  const downloadResponse = await artifactClient.downloadAllArtifacts();  
   child_process.execSync('ls; cd smallAmp-results*; ls; find . -name "*.zip" -exec unzip {} \;; rm *.zip; mv * ..', {cwd: PHARO_HOME})
+}
+
+async function create_overview_artifact(){
+  const run_number = process.env.GITHUB_RUN_NUMBER
   child_process.execSync('python3 runner.py -r amp -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r sum -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum.txt', {cwd: SMALLAMP_RUNNER})
-         
-          /* TODO
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "smallAmp-overview-${{ env.reponame }}-run${{github.run_number}}"
-          path: ${{env.SMALLAMP_CI_HOME}}/overview-*.txt */
+  const artifactClient = artifact.create()
+  const artifactOverview = 'smallAmp-overview-'+ REPO_NAME +'-run' + run_number;
+  const files_overview = fs.readdirSync(SMALLAMP_RUNNER).filter(fn => fn.endsWith('.txt')).map(x => SMALLAMP_RUNNER + '/' + x);
+  if (files_overview.length > 0)
+  {
+      const rootDirectory = SMALLAMP_RUNNER
+      const options = {
+        continueOnError: false
+      }
+      const uploadResponse = await artifactClient.uploadArtifact(artifactOverview, files_overview, rootDirectory, options)
+  }else{
+      core.info('No overview files to build the artifact. ')
+  }
+}
+
+async function create_commit_from_amplified_classes(){
+  const run_number = process.env.GITHUB_RUN_NUMBER
+  child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
   await run_st_script('installer.st')
-  child_process.execSync("git config user.name mabdi", {cwd: GITHUB_WORKSPACE})
+  child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git add '*.st'", {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git push -u origin HEAD", {cwd: GITHUB_WORKSPACE})
-          /* TODO: use octokit
-      - uses: actions/github-script@v4
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.pulls.create({
-                owner: "mabdi",
-                repo: '${{ env.reponame }}',
-                title: "[SmallAmp] amplified tests for action number ${{github.run_number}}",
-                head: "SmallAmp-${{github.run_number}}",
-                base: "${{ steps.extract_branch.outputs.branch }}",
-                body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
-            });
-  */
+}
+
+async function create_pull_request(){
+  const run_number = process.env.GITHUB_RUN_NUMBER
+  const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
+  const myToken = core.getInput('github-token');
+  const octokit = github.getOctokit(myToken)
+  octokit.rest.pulls.create({
+      owner: COMMIT_USER,
+      repo: `${ REPO_NAME }`,
+      title: `[SmallAmp] amplified tests for action number ${github.run_number}`,
+      head: `SmallAmp-${run_number}`,
+      base: base_branch,
+      body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
+  });
+}
+
+async function push_run() {
+  await download_extract_artifact();
+  await create_overview_artifact();
+  await create_commit_from_amplified_classes();
+  await create_pull_request();
 }
 
 async function logMe(string){
