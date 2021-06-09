@@ -67,7 +67,7 @@ async function download_SmallAmp(){
 
   const tonelPath = await tc.downloadTool(`https://github.com/${smallampSource}/archive/${smallampBranch}.tar.gz`)
   tempDir = await tc.extractTar(tonelPath, tempDir)
-  await io.mv(path.join(tempDir, 'small-amp-master'), SMALLAMP_HOME)
+  await io.mv(path.join(tempDir, `small-amp-${smallampBranch}`), SMALLAMP_HOME)
   await io.mkdirP(SMALLAMP_ZIPS);
   await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   // core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
