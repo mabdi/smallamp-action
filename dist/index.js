@@ -188,6 +188,7 @@ async function execute_smallamp_runner() {
     }
   };
   options.cwd = SMALLAMP_RUNNER;
+  await exec.exec('ls -al', options);
   await exec.exec('python3 runner.py -g', options);
   await logMe(myOutput)
   if(myError.length>0){
