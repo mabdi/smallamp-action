@@ -78,7 +78,7 @@ async function download_SmallAmp(){
   await io.mkdirP(SMALLAMP_ZIPS);
   await logMe('ls SMALLAMP_HOME: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_HOME}))
   // core.exportVariable('SMALLAMP_HOME', SMALLAMP_HOME);
-  // core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
+  core.exportVariable('SMALLAMP_TONEL', SMALLAMP_HOME);
   // core.addPath(path.join(SMALLAMP_RUNNER, 'bin'))
 }
 
