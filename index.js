@@ -188,7 +188,7 @@ async function execute_smallamp_runner() {
   // if(myError.length>0){
   //   core.setFailed(myError)
   // }
-  await child_process.execSync('python3 runner.py -g', {cwd: SMALLAMP_RUNNER})
+  await logMe(child_process.execSync('python3 runner.py -g', {cwd: SMALLAMP_RUNNER}))
 }
 
 async function amplify_run() {
