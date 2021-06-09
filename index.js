@@ -116,12 +116,16 @@ async function stat_project(){
 }
 
 async function setup_run() {
-  await logMe('***************Downloading SmallAmp')
-  await download_SmallAmp()
-  await logMe('***************Install Pharo')
-  await install_Pharo()
-  await logMe('***************Load project')
-  await load_project()
+  try{
+    await logMe('***************Downloading SmallAmp')
+    await download_SmallAmp()
+    await logMe('***************Install Pharo')
+    await install_Pharo()
+    await logMe('***************Load project')
+    await load_project()
+  }catch (error) {
+    core.setFailed(error.message);
+  }  
 }
 
 async function build_amplify_artifacts() {
@@ -168,14 +172,18 @@ async function execute_smallamp_runner() {
 }
 
 async function amplify_run() {
-  await logMe('***************Load SmallAmp')
-  await load_SmallAmp()
-  await logMe('***************Project stat')
-  await stat_project()
-  await logMe('***************Runner')
-  await execute_smallamp_runner()
-  await logMe('***************Build artifacts')
-  await build_amplify_artifacts()
+  try{  
+    await logMe('***************Load SmallAmp')
+    await load_SmallAmp()
+    await logMe('***************Project stat')
+    await stat_project()
+    await logMe('***************Runner')
+    await execute_smallamp_runner()
+    await logMe('***************Build artifacts')
+    await build_amplify_artifacts()
+  }catch (error) {
+    core.setFailed(error.message);
+  }  
 }
 
 
@@ -230,10 +238,14 @@ async function create_pull_request(){
 }
 
 async function push_run() {
-  await download_extract_artifact();
-  await create_overview_artifact();
-  await create_commit_from_amplified_classes();
-  await create_pull_request();
+  try{
+    await download_extract_artifact();
+    await create_overview_artifact();
+    await create_commit_from_amplified_classes();
+    await create_pull_request();
+  } catch (error) {
+    core.setFailed(error.message);
+  }  
 }
 
 async function logMe(string){
@@ -242,13 +254,9 @@ async function logMe(string){
   await core.info(string)
 }
 
-try {
-  if(action == 'setup')
-    setup_run();
-  if(action == 'amplify')
-    amplify_run();
-  if(action == 'push')
-    push_run();
-} catch (error) {
-  core.setFailed(error.message);
-}  
+if(action == 'setup')
+  setup_run();
+if(action == 'amplify')
+  amplify_run();
+if(action == 'push')
+  push_run();
