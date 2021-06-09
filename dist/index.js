@@ -175,25 +175,27 @@ async function execute_smallamp_runner() {
   // mode": os.getenv('SMALLAMP_mode'),
 
   // SMALLAMP_ZIPS
-  await logMe('ls SMALLAMP_RUNNER: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_RUNNER}))
-  let myOutput = '';
-  let myError = '';
-  const options = {};
-  options.listeners = {
-    stdout: (data) => {
-      myOutput += data.toString();
-    },
-    stderr: (data) => {
-      myError += data.toString();
-    }
-  };
-  options.cwd = SMALLAMP_RUNNER;
-  await exec.exec('ls -al', options);
-  await exec.exec('python3 runner.py -g', options);
-  await logMe(myOutput)
-  if(myError.length>0){
-    core.setFailed(myError)
-  }
+
+  // await logMe('ls SMALLAMP_RUNNER: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_RUNNER}))
+  // let myOutput = '';
+  // let myError = '';
+  // const options = {};
+  // options.listeners = {
+  //   stdout: (data) => {
+  //     myOutput += data.toString();
+  //   },
+  //   stderr: (data) => {
+  //     myError += data.toString();
+  //   }
+  // };
+  // options.cwd = SMALLAMP_RUNNER;
+  // await exec.exec('ls -al', options);
+  // await exec.exec('python3 runner.py -g', options);
+  // await logMe(myOutput)
+  // if(myError.length>0){
+  //   core.setFailed(myError)
+  // }
+  await child_process.execSync('python3 runner.py -g', {cwd: SMALLAMP_RUNNER})
 }
 
 async function amplify_run() {
