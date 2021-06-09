@@ -175,6 +175,7 @@ async function execute_smallamp_runner() {
   // mode": os.getenv('SMALLAMP_mode'),
 
   // SMALLAMP_ZIPS
+  await logMe('ls SMALLAMP_RUNNER: \n'+ child_process.execSync('ls -al', {cwd: SMALLAMP_RUNNER}))
   let myOutput = '';
   let myError = '';
   const options = {};
