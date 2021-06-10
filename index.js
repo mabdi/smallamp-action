@@ -77,11 +77,10 @@ async function download_SmallAmp(){
 
 async function run_Pharo(arg){
   cmd = './' + PHARO_VM + ' ' + PHARO_IMAGE + ' ' + arg
-  child_process.execSync(cmd, {cwd: PHARO_HOME})
+  await logMe('Running: '+ cmd + '\n' + child_process.execSync(cmd, {cwd: PHARO_HOME}))
 }
 
 async function run_st_script(scriptName){
-  await logMe('Running script '+ scriptName)
   await io.mv(path.join(SMALLAMP_SCRIPTS, scriptName), PHARO_HOME)
   await run_Pharo('st ' + scriptName)
   await io.mv(path.join(PHARO_HOME, scriptName), SMALLAMP_SCRIPTS)
