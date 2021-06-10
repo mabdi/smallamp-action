@@ -84,6 +84,7 @@ async function run_st_script(scriptName){
   await logMe('Running script '+ scriptName)
   await io.mv(path.join(SMALLAMP_SCRIPTS, scriptName), PHARO_HOME)
   await run_Pharo('st ' + scriptName)
+  await io.mv(path.join(PHARO_HOME, scriptName), SMALLAMP_SCRIPTS)
 }
 
 async function load_project(){
@@ -209,8 +210,21 @@ async function amplify_run() {
 
 async function download_extract_artifact(){
   const artifactClient = artifact.create();
-  const downloadResponse = await artifactClient.downloadAllArtifacts();  
-  child_process.execSync('ls; cd smallAmp-results*; ls; find . -name "*.zip" -exec unzip {} \;; rm *.zip; mv * ..', {cwd: PHARO_HOME})
+  // const downloadResponse = await artifactClient.downloadAllArtifacts();
+  // await logMe('Artifacts dowanloaded:\n' + downloadResponse + '\nls:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  // for(const art in downloadResponse){
+  //   const cwd = path.join(PHARO_HOME, art['artifactName'])
+  //   child_process.execSync("find . -name '*.zip' -exec sh -c 'unzip -d `basename {} .zip` {}; rm {}' ';' ", {cwd: cwd})
+  //   child_process.execSync("mv ./* ..", {cwd: cwd})
+  // }
+  const runId = process.env.GITHUB_RUN_NUMBER
+  const artifactClient = artifact.create()
+  const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
+  const downloadResponse = await artifactClient.downloadArtifact(artifactResults, PHARO_HOME, { createArtifactFolder: true })
+  const cwd = path.join(PHARO_HOME, artifactResults)
+  child_process.execSync("find . -name '*.zip' -exec sh -c 'unzip -d `basename {} .zip` {}; rm {}' ';' ", {cwd: cwd})
+  child_process.execSync("mv ./* ..", {cwd: cwd})
+  await logMe('Artifacts dowanloaded:\n' + downloadResponse + '\nls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 }
 
 async function create_overview_artifact(){
@@ -236,6 +250,7 @@ async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
   child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
   await run_st_script('installer.st')
+  await logMe('Before commit ls GITHUB_WORKSPACE:\n' + child_process.execSync('ls -al', {cwd: GITHUB_WORKSPACE}))
   child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git add '*.st'", {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: GITHUB_WORKSPACE})
@@ -247,7 +262,7 @@ async function create_pull_request(){
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken)
-  octokit.rest.pulls.create({
+  const res = await octokit.rest.pulls.create({
       owner: COMMIT_USER,
       repo: `${ REPO_NAME }`,
       title: `[SmallAmp] amplified tests for action number ${github.run_number}`,
@@ -255,13 +270,18 @@ async function create_pull_request(){
       base: base_branch,
       body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
   });
+  await logMe('Pull request sent: \n' + res)
 }
 
 async function push_run() {
   try{
+    await logMe('***************Downloading and extracting artifacts')
     await download_extract_artifact();
+    await logMe('***************Create overview artifact')
     await create_overview_artifact();
+    await logMe('***************Commit all amplified code')
     await create_commit_from_amplified_classes();
+    await logMe('***************Send pull request')
     await create_pull_request();
   } catch (error) {
     core.setFailed(error.message);
