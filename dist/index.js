@@ -234,13 +234,13 @@ async function download_extract_artifact(){
   await logMe('zip_files 2:\n' + zip_files)
   for(const index in zip_files){
     const zp = zip_files[index]
-    await logMe('file '+ zp +': ' + child_process.execSync("file " + zp, {cwd: PHARO_HOME}) );
-    await logMe('cat '+ zp +': ' + child_process.execSync("cat " + zp, {cwd: PHARO_HOME}) );
-    child_process.execSync("yes | unzip " + zp, {cwd: PHARO_HOME});
-    child_process.execSync("rm " + zp, {cwd: PHARO_HOME});
-    await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+    await logMe('file '+ zp +': ' + child_process.execSync("file " + zp, {cwd: cwd}) );
+    await logMe('cat '+ zp +': ' + child_process.execSync("cat " + zp, {cwd: cwd}) );
+    child_process.execSync("yes | unzip " + zp, {cwd: cwd});
+    child_process.execSync("rm " + zp, {cwd: cwd});
+    await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: cwd}))
   }
-  // child_process.execSync("mv * ..", {cwd: cwd})
+  child_process.execSync("mv * ..", {cwd: cwd})
   await logMe('Artifacts dowanloaded:\n' + downloadResponse + '\nls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 }
 
