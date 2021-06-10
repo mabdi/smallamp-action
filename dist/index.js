@@ -83,7 +83,7 @@ async function download_SmallAmp(){
 }
 
 async function run_Pharo(arg){
-  cmd = './' + PHARO_VM + ' ' + PHARO_IMAGE + ' ' + arg
+  args_all = (PHARO_IMAGE + ' ' + arg).split(" ")
   let myOutput = '';
   let myError = '';
   const options = {};
@@ -98,7 +98,7 @@ async function run_Pharo(arg){
     }
   };
   options.cwd = PHARO_HOME;
-  await exec.exec(cmd, options);
+  await exec.exec('./' + PHARO_VM, args_all, options);
   
   // await logMe('Running: '+ cmd + '\n' + child_process.execSync(cmd, {cwd: PHARO_HOME}))
 }
