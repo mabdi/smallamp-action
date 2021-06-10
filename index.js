@@ -256,8 +256,9 @@ async function create_overview_artifact(){
 
 async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
+  const GITHUB_WORKSPACE = process.env.GITHUB_WORKSPACE
   child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
-  await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
+  // await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
   await run_st_script('installer.st')
   await logMe('Before commit ls GITHUB_WORKSPACE:\n' + child_process.execSync('ls -al', {cwd: GITHUB_WORKSPACE}))
   child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: GITHUB_WORKSPACE})
