@@ -229,7 +229,7 @@ async function download_extract_artifact(){
   const downloadResponse = await artifactClient.downloadArtifact(artifactResults, PHARO_HOME, { createArtifactFolder: true })
   const cwd = path.join(PHARO_HOME, artifactResults)
   await logMe('ls 1:\n' + child_process.execSync('ls -al', {cwd: cwd}))
-  const zip_files = fs.readdirSync(cwd).filter(fn => fn.endsWith('*.zip'))
+  const zip_files = fs.readdirSync(cwd).filter(fn => fn.endsWith('.zip'))
   await logMe('zip_files 2:\n' + zip_files)
   for(const zp in zip_files){
     child_process.execSync("unzip " + zp, {cwd: cwd});
