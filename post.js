@@ -37,6 +37,7 @@ const fs = require('fs')
 //   }
 // }
 
+
 async function build_artifacts() {
   try {
      const dir = process.env.SMALLAMP_CI_ZIPS

@@ -8448,6 +8448,7 @@ const fs = __nccwpck_require__(5747)
 //   }
 // }
 
+
 async function build_artifacts() {
   try {
      const dir = process.env.SMALLAMP_CI_ZIPS
