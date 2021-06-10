@@ -83,11 +83,11 @@ async function run_Pharo(arg){
   options.listeners = {
     stdout: (data) => {
       myOutput += data.toString();
-      await core.info(data.toString());
+      core.info(data.toString());
     },
     stderr: (data) => {
       myError += data.toString();
-      await core.info(data.toString());
+      core.info(data.toString());
     }
   };
   options.cwd = PHARO_HOME;
