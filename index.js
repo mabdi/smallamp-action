@@ -209,7 +209,6 @@ async function amplify_run() {
 
 
 async function download_extract_artifact(){
-  const artifactClient = artifact.create();
   // const downloadResponse = await artifactClient.downloadAllArtifacts();
   // await logMe('Artifacts dowanloaded:\n' + downloadResponse + '\nls:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   // for(const art in downloadResponse){
