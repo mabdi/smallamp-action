@@ -230,8 +230,8 @@ async function download_extract_artifact(){
   const cwd = path.join(PHARO_HOME, artifactResults)
   const zip_files = fs.readdirSync(cwd).filter(fn => fn.endsWith('*.zip'))
   for(const zp in zip_files){
-    child_process.execSync("unzip " + zp);
-    child_process.execSync("rm " + zp);
+    child_process.execSync("unzip " + zp, {cwd: cwd});
+    child_process.execSync("rm " + zp, {cwd: cwd});
   }
   child_process.execSync("mv * ..", {cwd: cwd})
   await logMe('Artifacts dowanloaded:\n' + downloadResponse + '\nls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
