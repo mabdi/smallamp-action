@@ -4,7 +4,7 @@
   "description": "SmallAmp CI for github actions",
   "main": "index.js",
   "scripts": {
-    "prepare": "ncc build index.js -o dist && ncc build post.js -o dist2"
+    "prepare": "ncc build index.js -o dist"
   },
   "repository": {
     "type": "git",
