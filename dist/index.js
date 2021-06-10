@@ -297,7 +297,7 @@ async function create_pull_request(){
   const res = await octokit.rest.pulls.create({
       owner: COMMIT_USER,
       repo: `${ REPO_NAME }`,
-      title: `[SmallAmp] amplified tests for action number ${github.run_number}`,
+      title: `[SmallAmp] amplified tests for action number ${run_number}`,
       head: `SmallAmp-${run_number}`,
       base: base_branch,
       body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
