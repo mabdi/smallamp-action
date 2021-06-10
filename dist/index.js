@@ -87,16 +87,16 @@ async function run_Pharo(arg){
   let myOutput = '';
   let myError = '';
   const options = {};
-  options.listeners = {
-    stdout: (data) => {
-      myOutput += data.toString();
-      core.info(data.toString());
-    },
-    stderr: (data) => {
-      myError += data.toString();
-      core.info(data.toString());
-    }
-  };
+  // options.listeners = {
+  //   stdout: (data) => {
+  //     myOutput += data.toString();
+  //     core.info(data.toString());
+  //   },
+  //   stderr: (data) => {
+  //     myError += data.toString();
+  //     core.info(data.toString());
+  //   }
+  // };
   options.cwd = PHARO_HOME;
   await exec.exec('./' + PHARO_VM, args_all, options);
   
