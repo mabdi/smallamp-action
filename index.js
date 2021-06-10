@@ -219,10 +219,11 @@ async function download_extract_artifact(){
   const runId = process.env.GITHUB_RUN_NUMBER
   const artifactClient = artifact.create()
   const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
-  const downloadResponse = await artifactClient.downloadArtifact(artifactResults, PHARO_HOME, { createArtifactFolder: false })
-  // const cwd = path.join(PHARO_HOME, artifactResults)
-  await logMe('ls 1:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
-  const zip_files = fs.readdirSync(PHARO_HOME).filter(fn => fn.endsWith('.zip'))
+  // const downloadResponse = await artifactClient.downloadArtifact(artifactResults, PHARO_HOME, { createArtifactFolder: false })
+  const cwd = path.join(PHARO_HOME, artifactResults)
+  await logMe('ls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  await logMe('ls csw:\n' + child_process.execSync('ls -al', {cwd: cwd}))
+  const zip_files = fs.readdirSync(cwd).filter(fn => fn.endsWith('.zip'))
   await logMe('zip_files 2:\n' + zip_files)
   for(const index in zip_files){
     const zp = zip_files[index]
