@@ -226,7 +226,8 @@ async function download_extract_artifact(){
   await logMe('zip_files 2:\n' + zip_files)
   for(const index in zip_files){
     const zp = zip_files[index]
-    child_process.execSync("unzip " + zp, {cwd: cwd});
+    await logMe('file '+ zp +': ' + child_process.execSync("file " + zp, {cwd: cwd}) );
+    child_process.execSync("yes | unzip " + zp, {cwd: cwd});
     child_process.execSync("rm " + zp, {cwd: cwd});
     await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: cwd}))
   }
