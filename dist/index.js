@@ -59,7 +59,7 @@ async function install_Pharo(){
   // let version = await run_Pharo("eval 'Smalltalk version'")
   
   core.exportVariable('PHARO_HOME', PHARO_HOME);
-  core.exportVariable('PHARO_VM', PHARO_VM);
+  core.exportVariable('PHARO_VM', path.join(PHARO_HOME, PHARO_VM));
   core.exportVariable('PHARO_IMAGE', PHARO_IMAGE);
   // core.exportVariable('SMALLTALK_CI_VM', path.join(PHARO_HOME, PHARO_VM));
   // core.exportVariable('SMALLTALK_CI_IMAGE', path.join(PHARO_HOME, PHARO_IMAGE));
