@@ -221,15 +221,15 @@ async function download_extract_artifact(){
   const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
   // const downloadResponse = await artifactClient.downloadArtifact(artifactResults, PHARO_HOME, { createArtifactFolder: false })
   const cwd = path.join(PHARO_HOME, artifactResults)
-  await logMe('ls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
-  await logMe('ls csw:\n' + child_process.execSync('ls -al', {cwd: cwd}))
+  // await logMe('ls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  // await logMe('ls csw:\n' + child_process.execSync('ls -al', {cwd: cwd}))
   const zip_files = fs.readdirSync(cwd).filter(fn => fn.endsWith('.zip'))
   await logMe('zip_files 2:\n' + zip_files)
   for(const index in zip_files){
     const zp = zip_files[index]
     child_process.execSync("yes | unzip " + zp, {cwd: cwd});
     child_process.execSync("rm " + zp, {cwd: cwd});
-    await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: cwd}))
+    // await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: cwd}))
   }
   child_process.execSync("mv * ..", {cwd: cwd})
   await logMe('ls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
@@ -257,6 +257,7 @@ async function create_overview_artifact(){
 async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
   child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
+  await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
   await run_st_script('installer.st')
   await logMe('Before commit ls GITHUB_WORKSPACE:\n' + child_process.execSync('ls -al', {cwd: GITHUB_WORKSPACE}))
   child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: GITHUB_WORKSPACE})
