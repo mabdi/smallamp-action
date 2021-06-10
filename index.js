@@ -77,7 +77,23 @@ async function download_SmallAmp(){
 
 async function run_Pharo(arg){
   cmd = './' + PHARO_VM + ' ' + PHARO_IMAGE + ' ' + arg
-  await logMe('Running: '+ cmd + '\n' + child_process.execSync(cmd, {cwd: PHARO_HOME}))
+  let myOutput = '';
+  let myError = '';
+  const options = {};
+  options.listeners = {
+    stdout: (data) => {
+      myOutput += data.toString();
+      await core.info(data.toString());
+    },
+    stderr: (data) => {
+      myError += data.toString();
+      await core.info(data.toString());
+    }
+  };
+  options.cwd = PHARO_HOME;
+  await exec.exec(cmd, options);
+  
+  // await logMe('Running: '+ cmd + '\n' + child_process.execSync(cmd, {cwd: PHARO_HOME}))
 }
 
 async function run_st_script(scriptName){
