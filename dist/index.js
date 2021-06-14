@@ -149,33 +149,40 @@ async function setup_run() {
   }  
 }
 
+// os.system('cp _smallamp_last_event.json crash_event_{}.json'.format( timestamp ))
+//       os.system('mv _smallamp_crash_evidence.json crash_evidence_{}.json'.format( timestamp ))
+
 async function build_amplify_artifacts() {
     const dir = SMALLAMP_ZIPS
     const runId = process.env.GITHUB_RUN_NUMBER
     const artifactClient = artifact.create()
     const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
     const artifactLogs = 'smallAmp-logs-'+ REPO_NAME +'-run' + runId;
+    const artifactCrashes = 'smallAmp-crashes-'+ REPO_NAME +'-run' + runId;
     const files_results = fs.readdirSync(dir).filter(fn => fn.endsWith('results.zip')).map(x => dir + '/' + x);
     const files_logs = fs.readdirSync(dir).filter(fn => fn.endsWith('logs.zip')).map(x => dir + '/' + x);
+    const files_crashes = fs.readdirSync(dir).filter(fn => fn.endsWith('crashes.zip')).map(x => dir + '/' + x);
+    const rootDirectory = dir // Also possible to use __dirname
+    const options = {
+      continueOnError: false
+    }
     if (files_results.length > 0)
     {
-        const rootDirectory = dir // Also possible to use __dirname
-        const options = {
-          continueOnError: false
-        }
         const uploadResponse = await artifactClient.uploadArtifact(artifactResults, files_results, rootDirectory, options)
     }else{
         core.info('No result files to build the artifact. ')
     }
     if (files_logs.length > 0)
     {
-        const rootDirectory = dir // Also possible to use __dirname
-        const options = {
-          continueOnError: false
-        }
         const uploadResponse = await artifactClient.uploadArtifact(artifactLogs, files_logs, rootDirectory, options)
     }else{
         core.info('No logs files to build the artifact. ')
+    }
+    if (files_crashes.length > 0)
+    {
+        const uploadResponse = await artifactClient.uploadArtifact(artifactCrashes, files_crashes, rootDirectory, options)
+    }else{
+        core.info('No crashes files to build the artifact. ')
     }
 }
 
