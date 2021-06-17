@@ -47,7 +47,7 @@ async function install_Pharo(){
   await io.mkdirP(PHARO_HOME);
   await logMe('PHARO_HOME = '+ PHARO_HOME)
   await io.mv(path.join(SMALLAMP_SCRIPTS, 'installPharo.sh'), PHARO_HOME)
-  exec.exec('chmod', ['+x','./installPharo.sh'], {cwd: PHARO_HOME})
+  fs.chmodSync(path.join(PHARO_HOME, 'installPharo.sh'), 0o755)
   exec.exec('./installPharo.sh' , {cwd: PHARO_HOME})
   await logMe('After zeroconf ls PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   // let version = await run_Pharo("eval 'Smalltalk version'")
