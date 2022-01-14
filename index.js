@@ -127,6 +127,7 @@ async function stat_project(){
   const shreds = parseInt(process.env.SMALLAMP_SHREDS)
   if(!isNaN(shreds) && shreds>0){
     shred_string = ' --shred=' + shreds
+  }
   await run_Pharo('smallamp  --save --stat=' + REPO_NAME + shred_string)
   await logMe('PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   eval_content = child_process.execSync('cat '+ REPO_NAME + '.stat', {cwd: PHARO_HOME})
