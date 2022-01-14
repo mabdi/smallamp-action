@@ -123,7 +123,11 @@ async function load_SmallAmp(){
 }
 
 async function stat_project(){
-  await run_Pharo('smallamp  --save --stat=' + REPO_NAME)
+  var shred_string = ''
+  const shreds = parseInt(process.env.SMALLAMP_SHREDS)
+  if(!isNaN(shreds) && shreds>0){
+    shred_string = ' --shred=' + shreds
+  await run_Pharo('smallamp  --save --stat=' + REPO_NAME + shred_string)
   await logMe('PharoHome: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
   eval_content = child_process.execSync('cat '+ REPO_NAME + '.stat', {cwd: PHARO_HOME})
   await logMe('Stat eval done:\n' + eval_content)
@@ -260,6 +264,8 @@ async function download_extract_artifact(){
 
 async function create_overview_artifact(){
   const run_number = process.env.GITHUB_RUN_NUMBER
+  child_process.execSync('python3 runner.py -r amp -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp-fixed.txt', {cwd: SMALLAMP_RUNNER})
+  child_process.execSync('python3 runner.py -r sum -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum-fixed.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r amp -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r sum -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum.txt', {cwd: SMALLAMP_RUNNER})
   const artifactClient = artifact.create()
