@@ -263,8 +263,23 @@ async function download_extract_artifact(){
   await logMe('ls PHARO_HOME:\n' + child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 }
 
+async function create_workflow_input_params_file(){
+  const params = {
+    reponame: process.env.GITHUB_REPOSITORY,
+    iteration: process.env.iteration,
+    testClasses: process.env.testClasses,
+    mode: process.env.mode,
+    parallel_jobs: process.env.parallel_jobs,
+    maxInputs:  process.env.maxInputs,
+    shreds: process.env.shreds,
+    timeBudget: process.env.timeBudget
+  }
+  fs.writeFileSync(path.join(SMALLAMP_RUNNER, 'workflow_params.txt'), JSON.stringify(params))
+}
+
 async function create_overview_artifact(){
   const run_number = process.env.GITHUB_RUN_NUMBER
+  await create_workflow_input_params_file()
   child_process.execSync('python3 runner.py -r amp -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp-fixed.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r sum -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum-fixed.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r amp -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp.txt', {cwd: SMALLAMP_RUNNER})
