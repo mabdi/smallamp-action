@@ -259,11 +259,15 @@ async function download_extract_artifact(){
   const artifactlogs = 'smallAmp-logs-'+ REPO_NAME +'-run' + runId;
   const cwd_logs = path.join(PHARO_HOME, artifactlogs)
   const zip_files_logs = fs.readdirSync(cwd_logs).filter(fn => fn.endsWith('.zip'))
-  await logMe('zip_files for logs 2:\n' + zip_files)
+  await logMe('zip_files for logs 2:\n' + zip_files_logs)
   for(const index in zip_files_logs){
     const zp = zip_files_logs[index]
-    child_process.execSync("yes | unzip " + zp, {cwd: cwd_logs});
-    child_process.execSync("rm " + zp, {cwd: cwd_logs});
+    try {
+      child_process.execSync("yes | unzip " + zp, {cwd: cwd_logs});
+      child_process.execSync("rm " + zp, {cwd: cwd_logs});
+    } catch (error) {
+      await logMe('Error, skipping: ' + error.message)
+    }
     // await logMe('ls 2:\n' + child_process.execSync('ls -al', {cwd: cwd}))
   }
   child_process.execSync("mv * ..", {cwd: cwd_logs})
