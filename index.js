@@ -307,12 +307,12 @@ async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
   const GITHUB_WORKSPACE = process.env.GITHUB_WORKSPACE
   child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: GITHUB_WORKSPACE})
-  child_process.execSync("git status", {cwd: GITHUB_WORKSPACE})
+  await logMe('git status:\n' + child_process.execSync("git status", {cwd: GITHUB_WORKSPACE}))
   
   // await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
   await run_st_script('installer.st')
   await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: GITHUB_WORKSPACE}))
-  child_process.execSync("git status", {cwd: GITHUB_WORKSPACE})
+  await logMe('git status:\n' + child_process.execSync("git status", {cwd: GITHUB_WORKSPACE}))
   child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git add '*.st'", {cwd: GITHUB_WORKSPACE})
   child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: GITHUB_WORKSPACE})
