@@ -313,17 +313,17 @@ async function create_overview_artifact(){
 async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
   const cloneLocation = process.env.GitCloneLocation
-  child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
-  await logMe('git status:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
+  // child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
+  await logMe('git status before:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
   
   // await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
   await run_st_script('installer.st')
-  await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
-  await logMe('git status:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
+  // await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
+  await logMe('git status after:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
   child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
   child_process.execSync("git add '*.st'", {cwd: cloneLocation})
   child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
-  child_process.execSync("git push -u origin HEAD", {cwd: cloneLocation})
+  child_process.execSync("git push -u origin HEAD:SmallAmp-"+ run_number, {cwd: cloneLocation})
 }
 
 async function create_pull_request(){
