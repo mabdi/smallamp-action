@@ -320,7 +320,7 @@ async function create_commit_from_amplified_classes(){
   await run_st_script('installer.st')
   // await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
   await logMe('git status after:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
-  const n_changed_files = child_process.execSync("git diff --name-only").split(/\r\n|\r|\n/).length
+  const n_changed_files = child_process.execSync("git diff --name-only", {cwd: cloneLocation}).split(/\r\n|\r|\n/).length
   if(n_changed_files>0){
     await logMe('Lets push files. Number of changed files: ' + n_changed_files)
     child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
