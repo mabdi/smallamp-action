@@ -320,10 +320,18 @@ async function create_commit_from_amplified_classes(){
   await run_st_script('installer.st')
   // await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
   await logMe('git status after:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
-  child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
-  child_process.execSync("git add '*.st'", {cwd: cloneLocation})
-  child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
-  child_process.execSync("git push -u origin HEAD:SmallAmp-"+ run_number, {cwd: cloneLocation})
+  const n_changed_files = child_process.execSync("git diff --name-only").split(/\r\n|\r|\n/).length
+  if(n_changed_files>0){
+    await logMe('Lets push files. Number of changed files: ' + n_changed_files)
+    child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
+    child_process.execSync("git add '*.st'", {cwd: cloneLocation})
+    child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
+    child_process.execSync("git push -u origin HEAD:SmallAmp-"+ run_number, {cwd: cloneLocation})
+    return true
+  }else{
+    return false
+  }
+  
 }
 
 async function create_pull_request(){
@@ -349,9 +357,13 @@ async function push_run() {
     await logMe('***************Create overview artifact')
     await create_overview_artifact();
     await logMe('***************Commit all amplified code')
-    await create_commit_from_amplified_classes();
-    await logMe('***************Send pull request')
-    await create_pull_request();
+    const anyCommit = await create_commit_from_amplified_classes();
+    if(anyCommit){
+      await logMe('***************Send pull request')
+      await create_pull_request();
+    }else{
+      await logMe('***************No Commit. Skip sending pull request')
+    }
   } catch (error) {
     core.setFailed(error.message);
   }  
