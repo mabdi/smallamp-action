@@ -236,7 +236,7 @@ async function download_extract_artifact(){
   //   child_process.execSync("find . -name '*.zip' -exec sh -c 'unzip -d `basename {} .zip` {}; rm {}' ';' ", {cwd: cwd})
   //   child_process.execSync("mv ./* ..", {cwd: cwd})
   // }
-  const runId = process.env.GITHUB_RUN_NUMBER
+  const runId = process.env.dbg_run_number
   // const artifactClient = artifact.create()
   // No need to download the artifacts. we've downloaded in workflow
   const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
