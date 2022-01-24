@@ -339,12 +339,12 @@ async function push_run() {
   try{
     await logMe('***************Downloading and extracting artifacts')
     await download_extract_artifact();
-    await logMe('***************Create overview artifact')
-    await create_overview_artifact();
-    await logMe('***************Commit all amplified code')
-    await create_commit_from_amplified_classes();
-    await logMe('***************Send pull request')
-    await create_pull_request();
+    //await logMe('***************Create overview artifact')
+    //await create_overview_artifact();
+    //await logMe('***************Commit all amplified code')
+    //await create_commit_from_amplified_classes();
+    //await logMe('***************Send pull request')
+    //await create_pull_request();
   } catch (error) {
     core.setFailed(error.message);
   }  
