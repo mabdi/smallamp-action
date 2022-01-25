@@ -152,6 +152,8 @@ async function setup_run() {
     await install_Pharo()
     await logMe('***************Load project')
     await load_project()
+    await logMe('***************Load SmallAmp')
+    await load_SmallAmp()
   }catch (error) {
     core.setFailed(error.message);
   }  
@@ -214,8 +216,6 @@ async function execute_smallamp_runner() {
 
 async function amplify_run() {
   try{  
-    await logMe('***************Load SmallAmp')
-    await load_SmallAmp()
     await logMe('***************Project stat')
     await stat_project()
     await logMe('***************Runner')
