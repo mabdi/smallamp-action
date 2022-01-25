@@ -115,7 +115,7 @@ async function load_project(){
   // project_baseline should be set
   // project_directory should be set
   // project_load if necessary
-  // GITHUB_WORKSPACE -- I dont use it anymore. check GitCloneLocation.
+  // GITHUB_WORKSPACE
   // reponame
   core.exportVariable('project_repository', process.env.GITHUB_WORKSPACE + '/' + process.env.project_directory);
   await run_st_script('load_project.st')
@@ -312,7 +312,7 @@ async function create_overview_artifact(){
 
 async function create_commit_from_amplified_classes(){
   const run_number = process.env.GITHUB_RUN_NUMBER
-  const cloneLocation = process.env.GitCloneLocation
+  const cloneLocation = process.env.GITHUB_WORKSPACE
   // child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
   await logMe('git status before:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
   
