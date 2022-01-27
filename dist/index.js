@@ -39,6 +39,7 @@ const PHARO_HOME = path.join(os.homedir(), '.pharo')
 const PHARO_VM = 'pharo'
 const PHARO_IMAGE = 'Pharo.image'
 const COMMIT_USER = 'mabdi'
+const COMMIT_EMAIL = 'mehrdad.abdi@uantwerpen.be'
 const DEFAULT_BRANCH = 'master'
 const DEFAULT_SOURCE = 'mabdi/small-amp'
 
@@ -315,19 +316,24 @@ async function create_commit_from_amplified_classes(){
   const cloneLocation = process.env.GITHUB_WORKSPACE
   // child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
   await logMe('git status before:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
-  
+  child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
+  child_process.execSync(`git config user.email ${COMMIT_EMAIL}`, {cwd: cloneLocation})
   // await logMe('env:' + child_process.execSync('env', {cwd: PHARO_HOME}))
-  await run_st_script('installer.st')
+  //await run_st_script('installer.st')
+  await run_Pharo('smallamp  --loadAndCommit')
   // await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
   await logMe('git status after:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
+  await logMe('git diff --name-only:\n' + child_process.execSync("git diff --name-only", {cwd: cloneLocation}))
+  const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
+  await logMe('git log origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git log origin/"+ base_branch + "..HEAD", {cwd: cloneLocation}))
+  await logMe('git diff origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git diff origin/"+ base_branch +"..HEAD", {cwd: cloneLocation}))
   var n_changed_files = '' + child_process.execSync("git diff --name-only", {cwd: cloneLocation})
   await logMe('Files to commit:\n' + n_changed_files)
   n_changed_files = n_changed_files.split(/\r\n|\r|\n/).length
   if(n_changed_files>0){
     await logMe('Lets push files. Number of changed files: ' + n_changed_files)
-    child_process.execSync(`git config user.name ${COMMIT_USER}`, {cwd: cloneLocation})
-    child_process.execSync("git add '*.st'", {cwd: cloneLocation})
-    child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
+    // child_process.execSync("git add '*.st'", {cwd: cloneLocation})
+    // child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
     child_process.execSync("git push -u origin HEAD:SmallAmp-"+ run_number, {cwd: cloneLocation})
     return true
   }else{
