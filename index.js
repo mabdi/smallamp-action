@@ -316,11 +316,12 @@ async function create_commit_from_amplified_classes(){
   await run_Pharo('smallamp  --loadAndCommit')
   // await logMe('Before commit ls d:\n' + child_process.execSync('ls -al', {cwd: cloneLocation}))
   await logMe('git status after:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
-  await logMe('git diff --name-only:\n' + child_process.execSync("git diff --name-only", {cwd: cloneLocation}))
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
-  await logMe('git log origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git log origin/"+ base_branch + "..HEAD", {cwd: cloneLocation}))
-  await logMe('git diff origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git diff origin/"+ base_branch +"..HEAD", {cwd: cloneLocation}))
-  var n_changed_files = '' + child_process.execSync("git diff --name-only", {cwd: cloneLocation})
+
+  await logMe('git diff origin/'+base_branch+'..HEAD --name-only:\n' + child_process.execSync("git diff origin/"+base_branch+"..HEAD --name-only", {cwd: cloneLocation}))
+  // await logMe('git log origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git log origin/"+ base_branch + "..HEAD", {cwd: cloneLocation}))
+  // await logMe('git diff origin/'+base_branch+'..HEAD:\n' + child_process.execSync("git diff origin/"+ base_branch +"..HEAD", {cwd: cloneLocation}))
+  var n_changed_files = '' + child_process.execSync("git diff origin/"+base_branch+"..HEAD --name-only", {cwd: cloneLocation})
   await logMe('Files to commit:\n' + n_changed_files)
   n_changed_files = n_changed_files.split(/\r\n|\r|\n/).length
   if(n_changed_files>0){
