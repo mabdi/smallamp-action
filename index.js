@@ -358,13 +358,18 @@ async function push_run() {
     await download_extract_artifact();
     await logMe('***************Create overview artifact')
     await create_overview_artifact();
-    await logMe('***************Commit all amplified code')
-    const anyCommit = await create_commit_from_amplified_classes();
-    if(anyCommit){
-      await logMe('***************Send pull request')
-      await create_pull_request();
+    const nopush = process.env.SMALLAMP_NOPUSH
+    if(nopush == 'NOPUSH'){
+      await logMe('***************NoPush')
     }else{
-      await logMe('***************No Commit. Skip sending pull request')
+      await logMe('***************Commit all amplified code')
+      const anyCommit = await create_commit_from_amplified_classes();
+      if(anyCommit){
+        await logMe('***************Send pull request')
+        await create_pull_request();
+      }else{
+        await logMe('***************No Commit. Skip sending pull request')
+      }
     }
   } catch (error) {
     core.setFailed(error.message);
