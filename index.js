@@ -156,9 +156,18 @@ async function setup_run() {
 // os.system('cp _smallamp_last_event.json crash_event_{}.json'.format( timestamp ))
 //       os.system('mv _smallamp_crash_evidence.json crash_evidence_{}.json'.format( timestamp ))
 
+async function get_runid() {
+  if(process.env.SmallAmp_RUN_NUMBER){
+    runid = process.env.SmallAmp_RUN_NUMBER
+  }else{
+    runid = process.env.GITHUB_RUN_NUMBER
+  }
+  return runid
+}
+
 async function build_amplify_artifacts() {
     const dir = SMALLAMP_ZIPS
-    const runId = process.env.GITHUB_RUN_NUMBER
+    const runId = await get_runid()
     const artifactClient = artifact.create()
     const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
     const artifactLogs = 'smallAmp-logs-'+ REPO_NAME +'-run' + runId;
@@ -230,7 +239,7 @@ async function download_extract_artifact(){
   //   child_process.execSync("find . -name '*.zip' -exec sh -c 'unzip -d `basename {} .zip` {}; rm {}' ';' ", {cwd: cwd})
   //   child_process.execSync("mv ./* ..", {cwd: cwd})
   // }
-  const runId = process.env.GITHUB_RUN_NUMBER
+  const runId = await get_runid()
   // const artifactClient = artifact.create()
   // No need to download the artifacts. we've downloaded in workflow
   const artifactResults = 'smallAmp-results-'+ REPO_NAME +'-run' + runId;
@@ -283,7 +292,7 @@ async function create_workflow_input_params_file(){
 }
 
 async function create_overview_artifact(){
-  const run_number = process.env.GITHUB_RUN_NUMBER
+  const run_number = await get_runid()
   await create_workflow_input_params_file()
   child_process.execSync('python3 runner.py -r amp -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-amp-fixed.txt', {cwd: SMALLAMP_RUNNER})
   child_process.execSync('python3 runner.py -r sum -x -d '+ PHARO_HOME +' -p '+ REPO_NAME + ' > overview-sum-fixed.txt', {cwd: SMALLAMP_RUNNER})
@@ -305,7 +314,7 @@ async function create_overview_artifact(){
 }
 
 async function create_commit_from_amplified_classes(){
-  const run_number = process.env.GITHUB_RUN_NUMBER
+  const run_number = await get_runid()
   const cloneLocation = process.env.GITHUB_WORKSPACE
   // child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
   await logMe('git status before:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
@@ -337,7 +346,7 @@ async function create_commit_from_amplified_classes(){
 }
 
 async function create_pull_request(){
-  const run_number = process.env.GITHUB_RUN_NUMBER
+  const run_number = await get_runid()
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken)
