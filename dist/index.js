@@ -371,7 +371,7 @@ async function create_pull_request(){
 
 async function push_run() {
   try{
-    await logMe('ENV:\n' + child_process.execSync("env", {cwd: cloneLocation}))
+    await logMe('ENV:\n' + child_process.execSync("env"))
     await logMe('***************Downloading and extracting artifacts')
     await download_extract_artifact();
     await logMe('***************Create overview artifact')
