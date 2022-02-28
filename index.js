@@ -351,15 +351,23 @@ async function create_pull_request(){
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken)
   await logMe(`Sending pull request:\n owner: ${COMMIT_USER},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: SmallAmp-${run_number},\n base: ${base_branch}`)
-  const res = await octokit.rest.pulls.create({
-      owner: COMMIT_USER,
-      repo: `${ REPO_NAME }`,
-      title: `[SmallAmp] amplified tests for action number ${run_number}`,
-      head: `SmallAmp-${run_number}`,
-      base: base_branch,
-      body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
-  });
-  await logMe('Pull request sent: \n' + res)
+  try{
+    const res = await octokit.rest.pulls.create({
+        owner: COMMIT_USER,
+        repo: `${ REPO_NAME }`,
+        title: `[SmallAmp] amplified tests for action number ${run_number}`,
+        head: `SmallAmp-${run_number}`,
+        base: base_branch,
+        maintainer_can_modify: true,
+        body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
+    });
+    await logMe('Pull request sent: \n' + res)
+  } catch (error) {
+    await logMe('----Error in PR Sending-----')
+    await logMe(error.message)
+    await logMe(error)
+  }  
+  
 }
 
 async function push_run() {
