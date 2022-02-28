@@ -350,6 +350,7 @@ async function create_pull_request(){
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken)
+  await logMe(`Sending pull request:\n owner: ${COMMIT_USER},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: SmallAmp-${run_number},\n base: ${base_branch}`)
   const res = await octokit.rest.pulls.create({
       owner: COMMIT_USER,
       repo: `${ REPO_NAME }`,
@@ -363,6 +364,7 @@ async function create_pull_request(){
 
 async function push_run() {
   try{
+    await logMe('ENV:\n' + child_process.execSync("env", {cwd: cloneLocation}))
     await logMe('***************Downloading and extracting artifacts')
     await download_extract_artifact();
     await logMe('***************Create overview artifact')
