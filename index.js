@@ -365,7 +365,9 @@ async function create_pull_request(){
   } catch (error) {
     await logMe('----Error in PR Sending-----')
     await logMe(error.message)
+    await logMe(error.stack)
     await logMe(error)
+    
   }  
   
 }
