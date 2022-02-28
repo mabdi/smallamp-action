@@ -349,11 +349,12 @@ async function create_pull_request(){
   const run_number = await get_runid()
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
   const myToken = core.getInput('github-token');
-  const octokit = github.getOctokit(myToken)
-  await logMe(`Sending pull request:\n owner: ${COMMIT_USER},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: SmallAmp-${run_number},\n base: ${base_branch}`)
+  const octokit = github.getOctokit(myToken);
+  const owner = process.env.GITHUB_REPOSITORY_OWNER;
+  await logMe(`Sending pull request:\n owner: ${owner},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: SmallAmp-${run_number},\n base: ${base_branch}`)
   try{
     const res = await octokit.rest.pulls.create({
-        owner: COMMIT_USER,
+        owner: owner,
         repo: `${ REPO_NAME }`,
         title: `[SmallAmp] amplified tests for action number ${run_number}`,
         head: `SmallAmp-${run_number}`,
