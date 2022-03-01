@@ -368,7 +368,7 @@ async function create_pull_request(){
     await logMe(error.message)
     await logMe(error.stack)
     await logMe(error)
-    
+    core.setFailed(error.message);
   }  
   
 }
