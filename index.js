@@ -315,6 +315,22 @@ async function create_overview_artifact(){
 
 async function create_dashboard_jsons(){
   await run_Pharo('smallamp  --dashboardOutPut')
+  const runId = await get_runid()
+  await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
+  const artifactClient = artifact.create()
+  const artifactDashboardData = 'smallAmp-dashboardData-'+ REPO_NAME +'-run' + runId;
+  const files_dashboard = fs.readdirSync(SMALLAMP_RUNNER).filter(fn => fn.endsWith('.st')).map(x => SMALLAMP_RUNNER + '/' + x);
+  files_dashboard.append(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
+  if (files_dashboard.length > 0)
+  {
+      const rootDirectory = SMALLAMP_RUNNER
+      const options = {
+        continueOnError: false
+      }
+      const uploadResponse = await artifactClient.uploadArtifact(artifactDashboardData, files_dashboard, rootDirectory, options)
+  }else{
+      core.info('No overview files to build the artifact. ')
+  }
 }
 
 async function create_commit_from_amplified_classes(){
@@ -399,7 +415,7 @@ async function push_run() {
     }
 
     const createDashboardJson = process.env.SMALLAMP_DashboardJson
-    if(createDashboardJson){
+    if(createDashboardJson == 'true'){
       if(nopush == 'NOPUSH'){
         await create_commit_from_amplified_classes()
       }
