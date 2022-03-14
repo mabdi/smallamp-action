@@ -313,6 +313,10 @@ async function create_overview_artifact(){
   }
 }
 
+async function create_dashboard_jsons(){
+  await run_Pharo('smallamp  --dashboardOutPut')
+}
+
 async function create_commit_from_amplified_classes(){
   const run_number = await get_runid()
   const cloneLocation = process.env.GITHUB_WORKSPACE
@@ -393,6 +397,15 @@ async function push_run() {
         await logMe('***************No Commit. Skip sending pull request')
       }
     }
+
+    const createDashboardJson = process.env.SMALLAMP_DashboardJson
+    if(createDashboardJson){
+      if(nopush == 'NOPUSH'){
+        await create_commit_from_amplified_classes()
+      }
+      await create_dashboard_jsons()
+    }
+    
   } catch (error) {
     core.setFailed(error.message);
   }  
