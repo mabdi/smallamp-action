@@ -422,7 +422,7 @@ async function push_run() {
     }
 
     const createDashboardJson = process.env.SMALLAMP_DashboardJson
-    if(createDashboardJson == 'true'){
+    if(createDashboardJson == 'CREATE'){
       if(nopush == 'NOPUSH'){
         await create_commit_from_amplified_classes()
       }
