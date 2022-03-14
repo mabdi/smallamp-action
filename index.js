@@ -340,7 +340,7 @@ async function create_dashboard_jsons(){
       'x-api-key': '85351620962c5f9b923073b1fd8a0053cd2b6e75d8eb195c5e5ee42526edd9ec'
       },
       formData: {
-        'file.file':  zipFileObject,
+        'file':  zipFileObject,
         'json': jsonString
       }
     };
