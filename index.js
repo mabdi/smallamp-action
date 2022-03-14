@@ -324,22 +324,25 @@ async function create_dashboard_jsons(){
   jsonString = fs.readFileSync(PHARO_HOME + '/__smallamp_dashboard_export.json')
   await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 
+  zipFileObject = fs.createReadStream(zipAddress)
+
+  await logMe(jsonString)
+
+
   // TODO: read it from ENV  
   const url = 'https://mutation-testing-coverage.herokuapp.com/api/v1/testamplification/'
           
   var options = {
-    'method': 'POST',
-    'url': url,
-    'headers': {
-    'Content-Type': 'application/json',
-    'x-api-key': '85351620962c5f9b923073b1fd8a0053cd2b6e75d8eb195c5e5ee42526edd9ec'
-    },
-    formData: {
-    'file': {
-      'value': fs.createReadStream(zipAddress)
-    },
-    'json': jsonString
-    }
+      'method': 'POST',
+      'url': url,
+      'headers': {
+      'Content-Type': 'application/json',
+      'x-api-key': '85351620962c5f9b923073b1fd8a0053cd2b6e75d8eb195c5e5ee42526edd9ec'
+      },
+      formData: {
+        'file.file':  zipFileObject,
+        'json': jsonString
+      }
     };
     request(options, async function (error, response) {
       if (error){ 
