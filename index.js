@@ -10,6 +10,7 @@ const child_process = require('child_process')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
+const request = require('request')
 // const style = require('ansi-styles');
 
 
@@ -316,21 +317,40 @@ async function create_overview_artifact(){
 async function create_dashboard_jsons(){
   await run_Pharo('smallamp  --dashboardOutPut')
   const runId = await get_runid()
+  // const files_dashboard = fs.readdirSync(PHARO_HOME).filter(fn => fn.endsWith('.st')).map(x => PHARO_HOME + '/' + x);
+  // files_dashboard.push(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
+  zipAddress = PHARO_HOME + '/smallAmp-dashboardData.zip'
+  child_process.execSync("zip smallAmp-dashboardData.zip *.st" , {cwd: PHARO_HOME});
+  jsonString = fs.createReadStream(PHARO_HOME + '/__smallamp_dashboard_export.json')
   await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
-  const artifactClient = artifact.create()
-  const artifactDashboardData = 'smallAmp-dashboardData-'+ REPO_NAME +'-run' + runId;
-  const files_dashboard = fs.readdirSync(SMALLAMP_RUNNER).filter(fn => fn.endsWith('.st')).map(x => SMALLAMP_RUNNER + '/' + x);
-  files_dashboard.push(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
-  if (files_dashboard.length > 0)
-  {
-      const rootDirectory = SMALLAMP_RUNNER
-      const options = {
-        continueOnError: false
+
+  // TODO: read it from ENV  
+  const url = 'https://mutation-testing-coverage.herokuapp.com/api/v1/testamplification/'
+          
+  var options = {
+    'method': 'POST',
+    'url': url,
+    'headers': {
+    'Content-Type': 'application/json',
+    'x-api-key': '85351620962c5f9b923073b1fd8a0053cd2b6e75d8eb195c5e5ee42526edd9ec'
+    },
+    formData: {
+    'file': {
+      'value': fs.createReadStream(zipAddress)
+    },
+    'json': jsonString
+    }
+    };
+    request(options, async function (error, response) {
+      if (error){ 
+        await logMe('error: ' + error)
+      }else{
+        await logMe('success: ' + response.body)
       }
-      const uploadResponse = await artifactClient.uploadArtifact(artifactDashboardData, files_dashboard, rootDirectory, options)
-  }else{
-      core.info('No overview files to build the artifact. ')
-  }
+    });
+
+
+
 }
 
 async function create_commit_from_amplified_classes(){
