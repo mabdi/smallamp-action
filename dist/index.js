@@ -327,7 +327,7 @@ async function create_dashboard_jsons(){
   const artifactClient = artifact.create()
   const artifactDashboardData = 'smallAmp-dashboardData-'+ REPO_NAME +'-run' + runId;
   const files_dashboard = fs.readdirSync(SMALLAMP_RUNNER).filter(fn => fn.endsWith('.st')).map(x => SMALLAMP_RUNNER + '/' + x);
-  files_dashboard.append(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
+  files_dashboard.push(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
   if (files_dashboard.length > 0)
   {
       const rootDirectory = SMALLAMP_RUNNER
