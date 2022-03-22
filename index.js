@@ -402,7 +402,7 @@ async function create_pull_request(){
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken);
   const owner = process.env.GITHUB_REPOSITORY_OWNER;
-  await logMe(`Sending pull request:\n owner: ${owner},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: SmallAmp-${run_number},\n base: ${base_branch}`)
+  await logMe(`Sending pull request:\n owner: ${owner},\n repo: ${ REPO_NAME },\n title: [SmallAmp] amplified tests for action number ${run_number},\n head: ${new_branch_name},\n base: ${base_branch}`)
   try{
     const res = await octokit.rest.pulls.create({
         owner: owner,
