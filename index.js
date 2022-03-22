@@ -357,8 +357,12 @@ async function create_dashboard_jsons(){
 
 }
 
-async function create_commit_from_amplified_classes(){
+async function get_new_branch_name(){
   const run_number = await get_runid()
+  return (NEW_BRANCH_PREFIX? NEW_BRANCH_PREFIX: 'SmallAmp') + '-' +  run_number
+}
+
+async function create_commit_from_amplified_classes(){
   const cloneLocation = process.env.GITHUB_WORKSPACE
   // child_process.execSync("git checkout -b SmallAmp-"+ run_number , {cwd: cloneLocation})
   await logMe('git status before:\n' + child_process.execSync("git status", {cwd: cloneLocation}))
@@ -381,7 +385,8 @@ async function create_commit_from_amplified_classes(){
     await logMe('Lets push files. Number of changed files: ' + n_changed_files)
     // child_process.execSync("git add '*.st'", {cwd: cloneLocation})
     // child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
-    const new_branch_name = (NEW_BRANCH_PREFIX? NEW_BRANCH_PREFIX: 'SmallAmp') + '-' +  run_number
+    const new_branch_name = await get_new_branch_name()
+    await logMe('New branch name: ' + new_branch_name + ' , env.SMALLAMP_NEWBRANCH: ' + process.env.SMALLAMP_NEWBRANCH)
     child_process.execSync("git push -u origin HEAD:"+ new_branch_name, {cwd: cloneLocation})
     return true
   }else{
@@ -392,6 +397,7 @@ async function create_commit_from_amplified_classes(){
 
 async function create_pull_request(){
   const run_number = await get_runid()
+  const new_branch_name = await get_new_branch_name()
   const base_branch = process.env.GITHUB_REF.substring("refs/heads/".length, process.env.GITHUB_REF.length);
   const myToken = core.getInput('github-token');
   const octokit = github.getOctokit(myToken);
@@ -402,7 +408,7 @@ async function create_pull_request(){
         owner: owner,
         repo: `${ REPO_NAME }`,
         title: `[SmallAmp] amplified tests for action number ${run_number}`,
-        head: `SmallAmp-${run_number}`,
+        head: new_branch_name,
         base: base_branch,
         maintainer_can_modify: true,
         body: "I submit this pull request to suggest new tests based on the output of SmallAmp tool."
