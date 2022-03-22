@@ -328,7 +328,7 @@ async function create_dashboard_jsons(){
   // const files_dashboard = fs.readdirSync(PHARO_HOME).filter(fn => fn.endsWith('.st')).map(x => PHARO_HOME + '/' + x);
   // files_dashboard.push(SMALLAMP_RUNNER + '/__smallamp_dashboard_export.json')
   zipAddress = PHARO_HOME + '/smallAmp-dashboardData.zip'
-  child_process.execSync("zip smallAmp-dashboardData.zip *.st" , {cwd: PHARO_HOME});
+  child_process.execSync("zip smallAmp-dashboardData.zip "+ process.env.project_directory , {cwd: PHARO_HOME});
   jsonString = fs.readFileSync(PHARO_HOME + '/__smallamp_dashboard_export.json')
   await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 
