@@ -51,6 +51,7 @@ const SMALLAMP_ZIPS = path.join(SMALLAMP_HOME, '_zip')
 
 const action = core.getInput('action', { required: true });
 const REPO_NAME = process.env.reponame
+const NEW_BRANCH_PREFIX = process.env.SMALLAMP_NEWBRANCH
 
 async function install_Pharo(){
   await io.mkdirP(PHARO_HOME);
@@ -387,7 +388,8 @@ async function create_commit_from_amplified_classes(){
     await logMe('Lets push files. Number of changed files: ' + n_changed_files)
     // child_process.execSync("git add '*.st'", {cwd: cloneLocation})
     // child_process.execSync("git commit -m '[SmallAmp] amplified tests added'", {cwd: cloneLocation})
-    child_process.execSync("git push -u origin HEAD:SmallAmp-"+ run_number, {cwd: cloneLocation})
+    const new_branch_name = (NEW_BRANCH_PREFIX? NEW_BRANCH_PREFIX: 'SmallAmp') + '-' +  run_number
+    child_process.execSync("git push -u origin HEAD:"+ new_branch_name, {cwd: cloneLocation})
     return true
   }else{
     return false
