@@ -333,7 +333,7 @@ async function create_dashboard_jsons(){
   await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 
   zipFileObject = fs.createReadStream(zipAddress)
-
+  api_key = process.env.DASHBOARD_api_key // I know.  I should use secrets TODO
   await logMe(jsonString)
 
 
@@ -345,7 +345,7 @@ async function create_dashboard_jsons(){
       'url': url,
       'headers': {
       'Content-Type': 'application/json',
-      'x-api-key': '85351620962c5f9b923073b1fd8a0053cd2b6e75d8eb195c5e5ee42526edd9ec'
+      'x-api-key': api_key
       },
       formData: {
         'file':  zipFileObject,
