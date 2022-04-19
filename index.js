@@ -323,6 +323,7 @@ async function create_dashboard_jsons(){
   zipAddress = PHARO_HOME + '/smallAmp-dashboardData.zip'
   child_process.execSync("zip -r smallAmp-dashboardData.zip "+ process.env.project_directory , {cwd: PHARO_HOME});
   jsonString = fs.readFileSync(PHARO_HOME + '/__smallamp_dashboard_export.json')
+  jsonMutation = fs.readFileSync(PHARO_HOME + '/__mutalk_export.json')
   await logMe('After create_dashboard_jsons: \n'+ child_process.execSync('ls -al', {cwd: PHARO_HOME}))
 
   zipFileObject = fs.createReadStream(zipAddress)
@@ -342,7 +343,8 @@ async function create_dashboard_jsons(){
       },
       formData: {
         'file':  zipFileObject,
-        'json': jsonString
+        'json': jsonString,
+        'mutation': jsonMutation
       }
     };
     request(options, async function (error, response) {
